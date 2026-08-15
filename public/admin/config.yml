@@ -1,0 +1,142 @@
+# Especificación: ver 8leaks Technical Specification, sección 3 (auditada).
+# Los campos de cada collection deben mantenerse en paridad 1:1 con los
+# schemas Zod de src/content.config.ts — ese archivo es la fuente de verdad.
+
+backend:
+  name: github
+  branch: main
+  # TODO(fase 2 — worker de auth): reemplazar cuando exista el repo remoto.
+  repo: "8leaks/8leaks-site"
+  # TODO(fase 2 — worker de auth): reemplazar por el dominio real del Worker
+  # de OAuth (Cloudflare Worker, repo separado 8leaks-cms-auth). Sin esto
+  # desplegado, el botón "Login with GitHub" no completa el login.
+  base_url: "https://REEMPLAZAR-worker-domain.example"
+  auth_endpoint: auth
+
+publish_mode: editorial_workflow
+
+# cloud_name + api_key no son secretos (solo habilitan uploads sin firmar a
+# un preset específico — confirmado en la auditoría de pre-implementación).
+# TODO(fase 2 — cuenta de Cloudinary): reemplazar por los valores reales.
+media_library:
+  name: cloudinary
+  config:
+    cloud_name: "REEMPLAZAR_CLOUDINARY_CLOUD_NAME"
+    api_key: "REEMPLAZAR_CLOUDINARY_API_KEY"
+
+collections:
+  - name: articulos
+    label: Artículos
+    folder: src/content/articulos
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    fields:
+      - { label: Título, name: title, widget: string, pattern: ['.{10,120}', "Debe tener entre 10 y 120 caracteres"] }
+      - { label: Subtítulo (dek), name: dek, widget: string, required: false, pattern: ['.{0,200}', "Máximo 200 caracteres"] }
+      - { label: Resumen (excerpt), name: excerpt, widget: text, pattern: ['.{50,300}', "Debe tener entre 50 y 300 caracteres"] }
+      - label: Imagen de portada
+        name: coverImage
+        widget: object
+        fields:
+          - { label: Imagen, name: url, widget: image, media_library: { config: { multiple: false } } }
+          - { label: Texto alternativo, name: alt, widget: string }
+      - label: Autor(es)
+        name: author
+        widget: relation
+        collection: autores
+        multiple: true
+        min: 1
+        search_fields: [name]
+        display_fields: [name]
+        value_field: "{{slug}}"
+      - label: Categoría
+        name: category
+        widget: select
+        options:
+          - { label: Política, value: politica }
+          - { label: Economía, value: economia }
+          - { label: Geopolítica, value: geopolitica }
+          - { label: Sociedad, value: sociedad }
+          - { label: Psicología y comportamiento, value: psicologia-comportamiento }
+          - { label: Análisis y opinión, value: analisis-opinion }
+      - { label: Tags, name: tags, widget: list, required: false, default: [] }
+      - label: Fuentes
+        name: sources
+        widget: list
+        required: false
+        default: []
+        fields:
+          - { label: Etiqueta, name: label, widget: string }
+          - { label: URL, name: url, widget: string, required: false }
+          - label: Tipo
+            name: type
+            widget: select
+            options:
+              - { label: Fuente oficial, value: oficial }
+              - { label: Medio de comunicación, value: medio }
+              - { label: Documento, value: documento }
+              - { label: Estudio académico, value: estudio_academico }
+              - { label: Organismo internacional, value: organismo_internacional }
+              - { label: Entrevista, value: entrevista }
+              - { label: Otro, value: otro }
+          - { label: Publisher, name: publisher, widget: string, required: false }
+          - { label: Fecha de consulta, name: accessedAt, widget: datetime, required: false }
+      - { label: Fecha de publicación, name: publishedAt, widget: datetime }
+      - { label: Fecha de actualización, name: updatedAt, widget: datetime, required: false }
+      - { label: Destacado, name: featured, widget: boolean, default: false }
+      - { label: Orden en destacados, name: featuredOrder, widget: number, required: false, value_type: int }
+      - { label: Acceso, name: access, widget: select, options: [free, premium], default: free }
+      - label: Sponsor / disclosure
+        name: sponsor
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: Contenido patrocinado, name: sponsored, widget: boolean, default: false }
+          - { label: Nombre del sponsor, name: sponsorName, widget: string, required: false }
+      - label: SEO (overrides opcionales)
+        name: seo
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: Title override, name: title, widget: string, required: false }
+          - { label: Description override, name: description, widget: text, required: false }
+          - { label: OG image override, name: ogImage, widget: image, required: false }
+          - { label: noindex, name: noindex, widget: boolean, default: false }
+      - { label: Borrador, name: draft, widget: boolean, default: true }
+      - { label: Cuerpo, name: body, widget: markdown }
+
+  - name: autores
+    label: Autores
+    folder: src/content/autores
+    create: true
+    slug: "{{slug}}"
+    identifier_field: name
+    fields:
+      - { label: Nombre, name: name, widget: string, pattern: ['.{2,}', "Mínimo 2 caracteres"] }
+      - { label: Bio, name: bio, widget: text, required: false, pattern: ['.{0,500}', "Máximo 500 caracteres"] }
+      - label: Avatar
+        name: avatar
+        widget: object
+        required: false
+        fields:
+          - { label: Imagen, name: url, widget: image }
+          - { label: Texto alternativo, name: alt, widget: string }
+      - label: Redes sociales
+        name: socialLinks
+        widget: list
+        required: false
+        default: []
+        fields:
+          - { label: Plataforma, name: platform, widget: select, options: [twitter, instagram, linkedin, website] }
+          - { label: URL, name: url, widget: string }
+      - label: Rol
+        name: role
+        widget: select
+        options:
+          - { label: Autor principal, value: autor_principal }
+          - { label: Colaborador, value: colaborador }
+          - { label: Editor, value: editor }
+        default: colaborador
