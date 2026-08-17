@@ -17,8 +17,8 @@ publish_mode: editorial_workflow
 media_library:
   name: cloudinary
   config:
-    cloud_name: "REEMPLAZAR_CLOUDINARY_CLOUD_NAME"
-    api_key: "REEMPLAZAR_CLOUDINARY_API_KEY"
+    cloud_name: "dbkkfda3c"
+    api_key: "578224957353445"
 
 collections:
   - name: articulos
