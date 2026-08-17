@@ -78,7 +78,7 @@ collections:
               - { label: Otro, value: otro }
           - { label: Publisher, name: publisher, widget: string, required: false }
           - { label: Fecha de consulta, name: accessedAt, widget: datetime, required: false }
-      - { label: Fecha de publicación, name: publishedAt, widget: datetime }
+      - { label: Fecha de publicación, name: publishedAt, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ" }
       - { label: Fecha de actualización, name: updatedAt, widget: datetime, required: false }
       - { label: Destacado, name: featured, widget: boolean, default: false }
       - { label: Orden en destacados, name: featuredOrder, widget: number, required: false, value_type: int }
