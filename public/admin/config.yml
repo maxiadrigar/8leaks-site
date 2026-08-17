@@ -4,13 +4,9 @@
 
 backend:
   name: github
+  repo: maxiadrigar/8leaks-site
   branch: main
-  # TODO(fase 2 — worker de auth): reemplazar cuando exista el repo remoto.
-  repo: "8leaks/8leaks-site"
-  # TODO(fase 2 — worker de auth): reemplazar por el dominio real del Worker
-  # de OAuth (Cloudflare Worker, repo separado 8leaks-cms-auth). Sin esto
-  # desplegado, el botón "Login with GitHub" no completa el login.
-  base_url: "https://REEMPLAZAR-worker-domain.example"
+  base_url: https://8leaks-cms-auth.maxiadrigar.workers.dev
   auth_endpoint: auth
 
 publish_mode: editorial_workflow
