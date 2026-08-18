@@ -1,0 +1,161 @@
+---
+// Mismo criterio que en Header: rutas planificadas, todavía no enlaces
+// reales. "Información" apunta a páginas institucionales que tampoco
+// existen todavía (no hay página de autor único, "sobre" ni contacto),
+// así que se muestran igual que las categorías: preparadas, sin href.
+const SECTION_LINKS = [
+  { label: "Política", plannedPath: "/politica/" },
+  { label: "Economía", plannedPath: "/economia/" },
+  { label: "Geopolítica", plannedPath: "/geopolitica/" },
+  { label: "Psicología", plannedPath: "/psicologia/" },
+];
+
+const INFO_LINKS = [
+  { label: "Sobre 8LEAKS", plannedPath: "/sobre-8leaks/" },
+  { label: "Autores", plannedPath: "/autores/" },
+  { label: "Contacto", plannedPath: "/contacto/" },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__top">
+      <nav class="site-footer__nav-columns" aria-label="Navegación institucional">
+        <div class="site-footer__column">
+          <p class="site-footer__column-title">Secciones</p>
+          <ul class="site-footer__column-list">
+            {
+              SECTION_LINKS.map((item) => (
+                <li>
+                  <span class="site-footer__link" data-planned-path={item.plannedPath}>
+                    {item.label}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="site-footer__column">
+          <p class="site-footer__column-title">Información</p>
+          <ul class="site-footer__column-list">
+            {
+              INFO_LINKS.map((item) => (
+                <li>
+                  <span class="site-footer__link" data-planned-path={item.plannedPath}>
+                    {item.label}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </nav>
+
+      <div class="site-footer__brand-block">
+        <img
+          src="/brand/8leaks-logo-vertical.png"
+          alt="8LEAKS"
+          class="site-footer__logo-vertical"
+          width="1254"
+          height="1254"
+        />
+      </div>
+    </div>
+
+    <p class="site-footer__legal">© {year} 8LEAKS. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-black);
+  }
+
+  .site-footer__top {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding-block: var(--space-5) var(--space-3);
+  }
+
+  .site-footer__nav-columns {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .site-footer__column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 140px;
+  }
+
+  .site-footer__column-title {
+    color: var(--color-text-on-dark);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-body);
+    line-height: var(--leading-meta);
+  }
+
+  .site-footer__column-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .site-footer__link {
+    display: inline-block;
+    color: var(--color-text-on-dark);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    line-height: var(--leading-meta);
+    cursor: default;
+  }
+
+  .site-footer__brand-block {
+    display: flex;
+    justify-content: center;
+    padding-block: 0;
+  }
+
+  .site-footer__logo-vertical {
+    width: clamp(180px, 50vw, 260px);
+    height: auto;
+  }
+
+  .site-footer__legal {
+    color: var(--color-text-on-dark);
+    font-size: var(--text-meta);
+    line-height: var(--leading-meta);
+    padding-block: var(--space-2);
+    border-top: var(--border-hairline-dark);
+  }
+
+  @media (min-width: 768px) {
+    .site-footer__top {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-block: var(--space-6) var(--space-5);
+    }
+
+    .site-footer__nav-columns {
+      flex-direction: row;
+      gap: var(--space-9);
+    }
+
+    .site-footer__brand-block {
+      justify-content: flex-end;
+      padding-block: 0;
+    }
+
+    .site-footer__logo-vertical {
+      width: clamp(240px, 22vw, 380px);
+    }
+  }
+</style>

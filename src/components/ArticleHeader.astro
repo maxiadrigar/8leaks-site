@@ -1,0 +1,85 @@
+---
+// Cabecera editorial del artículo individual — categoría, título, bajada
+// y metadata, todo en la misma columna de lectura (--container-reading).
+// Sin cards, sin fondos, sin líneas decorativas, sin ámbar: fondo blanco
+// directo después del Header negro, tal como pide la referencia de X.
+import type { CollectionEntry } from "astro:content";
+import { categoryLabel, formatArticleDate } from "../lib/content-format";
+
+interface Props {
+  article: CollectionEntry<"articulos">;
+  author: CollectionEntry<"autores"> | null;
+}
+
+const { article, author } = Astro.props;
+const { title, category, dek, excerpt, publishedAt, updatedAt } = article.data;
+const bajada = dek ?? excerpt;
+const wasUpdated = updatedAt && updatedAt.getTime() !== publishedAt.getTime();
+---
+
+<header class="article-header">
+  <div class="article-header__inner">
+    <p class="article-header__eyebrow">{categoryLabel(category)}</p>
+    <h1 class="article-header__title">{title}</h1>
+    {bajada && <p class="article-header__dek">{bajada}</p>}
+    <p class="article-header__meta">
+      {author && <span>{author.data.name}</span>}
+      {author && " · "}
+      <time datetime={publishedAt.toISOString()}>{formatArticleDate(publishedAt)}</time>
+      {wasUpdated && updatedAt && (
+        <span class="article-header__updated"> · Actualizado el {formatArticleDate(updatedAt)}</span>
+      )}
+    </p>
+  </div>
+</header>
+
+<style>
+  .article-header {
+    background: var(--color-paper);
+    padding-block: var(--space-6) var(--space-7);
+  }
+
+  .article-header__inner {
+    width: min(var(--container-reading), 100%);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+  }
+
+  @media (min-width: 1024px) {
+    .article-header__inner {
+      margin-left: calc(50% - (var(--container-reading) / 2) + var(--reading-offset));
+      margin-right: 0;
+    }
+  }
+
+  .article-header__eyebrow {
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    font-weight: 700;
+    letter-spacing: var(--tracking-body);
+    line-height: var(--leading-meta);
+    margin-bottom: var(--space-4);
+  }
+
+  .article-header__title {
+    color: var(--color-black);
+    font-size: var(--text-article-title);
+    font-weight: 700;
+    line-height: var(--leading-solid);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .article-header__dek {
+    margin-top: var(--space-5);
+    color: var(--color-gray-700);
+    font-size: var(--text-hero-support);
+    line-height: var(--leading-snug);
+  }
+
+  .article-header__meta {
+    margin-top: var(--space-6);
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    line-height: var(--leading-meta);
+  }
+</style>

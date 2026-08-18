@@ -1,0 +1,67 @@
+---
+// Fila tipográfica de post — sin imagen, sin card, sin borde. Todos los
+// posts se ven exactamente igual (featured es solo un criterio de orden,
+// ver index.astro), como en el listado "Latest posts" de blog.x.com.
+//
+// El título todavía NO es un enlace: no existe la página individual de
+// artículo. Cuando exista, envolver el <h3> en <a href={...}> y activar
+// el hover gris → negro dejado preparado (comentado) más abajo.
+import type { CollectionEntry } from "astro:content";
+import { categoryLabel, formatArticleDate } from "../lib/content-format";
+
+interface Props {
+  article: CollectionEntry<"articulos">;
+  author: CollectionEntry<"autores"> | null;
+}
+
+const { article, author } = Astro.props;
+const { title, category, publishedAt } = article.data;
+---
+
+<article class="post-row">
+  <p class="post-row__eyebrow">{categoryLabel(category)}</p>
+  <h3 class="post-row__title">{title}</h3>
+  <p class="post-row__meta">
+    {author && <span>{author.data.name}</span>}
+    {author && " · "}
+    <time datetime={publishedAt.toISOString()}>{formatArticleDate(publishedAt)}</time>
+  </p>
+</article>
+
+<style>
+  .post-row {
+    padding-block: var(--space-7);
+  }
+
+  .post-row__eyebrow {
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    font-weight: 700;
+    letter-spacing: var(--tracking-body);
+    line-height: var(--leading-meta);
+    margin-bottom: var(--space-3);
+  }
+
+  .post-row__title {
+    color: var(--color-graphite-600);
+    font-size: var(--text-post-title);
+    font-weight: 700;
+    line-height: var(--leading-solid);
+    letter-spacing: var(--tracking-display);
+    max-width: 44ch;
+  }
+
+  /* Preparado para cuando el título sea un enlace real:
+  .post-row__title:hover {
+    color: var(--color-ink-950);
+    transition: color 180ms ease;
+  }
+  */
+
+  .post-row__meta {
+    margin-top: var(--space-4);
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    line-height: var(--leading-meta);
+  }
+</style>

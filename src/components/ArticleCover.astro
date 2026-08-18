@@ -1,0 +1,49 @@
+---
+// Portada del artículo — reutiliza los helpers de Cloudinary existentes,
+// misma columna de lectura que el resto de la página. Si la imagen falla
+// al cargar, el <figure> se retira por completo (sin placeholder, sin
+// hueco visual): la página debe seguir viéndose profesional sin ella.
+import { cloudinarySrcSet, cloudinaryUrlAtWidth, COVER_IMAGE_WIDTHS } from "../lib/cloudinary";
+
+interface Props {
+  coverImage: { url: string; alt: string };
+}
+
+const { coverImage } = Astro.props;
+const src = cloudinaryUrlAtWidth(coverImage.url, 1200);
+const srcset = cloudinarySrcSet(coverImage.url, COVER_IMAGE_WIDTHS);
+---
+
+<figure class="article-cover">
+  <img
+    src={src}
+    srcset={srcset}
+    sizes="(min-width: 768px) 720px, 100vw"
+    alt={coverImage.alt}
+    loading="eager"
+    class="article-cover__image"
+    onerror="this.closest('figure')?.remove()"
+  />
+</figure>
+
+<style>
+  .article-cover {
+    width: min(var(--container-reading), 100%);
+    margin-block: var(--space-7) var(--space-8);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+  }
+
+  @media (min-width: 1024px) {
+    .article-cover {
+      margin-left: calc(50% - (var(--container-reading) / 2) + var(--reading-offset));
+      margin-right: 0;
+    }
+  }
+
+  .article-cover__image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-subtle);
+  }
+</style>

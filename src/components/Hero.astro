@@ -1,0 +1,79 @@
+---
+// Hero institucional de 8LEAKS — ya no muestra un artículo (ver
+// LatestArticles para el listado de posts). El isotipo va centrado y a
+// gran escala, con el título superpuesto encima a propósito (igual que
+// la X gigante del hero de blog.x.com). El fondo del PNG es negro puro,
+// igual que el Hero, así que aunque el símbolo exceda el recuadro nunca
+// se nota un recuadro.
+---
+
+<section class="hero" aria-label="8LEAKS">
+  <img
+    src="/brand/8leaks-symbol.png"
+    alt=""
+    aria-hidden="true"
+    class="hero__symbol"
+    width="1254"
+    height="1254"
+  />
+
+  <div class="container hero__content">
+    <h1 class="hero__title">Lo que está pasando ahora</h1>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-black);
+    min-height: clamp(440px, 64vh, 640px);
+    display: flex;
+    align-items: center;
+  }
+
+  .hero__symbol {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 78vw;
+    height: 78vw;
+    max-width: none;
+    opacity: 0.32;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-block: var(--space-8);
+  }
+
+  .hero__title {
+    max-width: 900px;
+    color: var(--color-text-on-dark);
+    font-size: var(--text-hero);
+    font-weight: 700;
+    line-height: var(--leading-solid);
+    letter-spacing: var(--tracking-display);
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      min-height: auto;
+    }
+
+    .hero__content {
+      padding-block: var(--space-7);
+    }
+
+    .hero__symbol {
+      width: 130vw;
+      height: 130vw;
+      opacity: 0.26;
+    }
+  }
+</style>

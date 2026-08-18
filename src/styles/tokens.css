@@ -1,0 +1,96 @@
+/* Tokens del sistema visual de 8LEAKS.
+   Breakpoints de referencia (no expresables como custom property en
+   media queries): sm 480px · md 768px · lg 1024px · xl 1280px. */
+
+:root {
+  /* Color — negro/grafito y blanco predominan; el ámbar es únicamente acento.
+     La zona editorial es blanco puro (como blog.x.com), no beige. El gris
+     de los títulos de post (--color-graphite-600) y --color-ink-950 (su
+     futuro estado hover, todavía sin activar — ver PostRow.astro) siguen
+     la disciplina tonal de X: nunca negro puro salvo como estado de
+     énfasis. Todos verificados con contraste AA sobre --color-paper. */
+  --color-black: #000000;
+  --color-graphite-900: #131313;
+  --color-graphite-800: #1c1c1c;
+  --color-white: #ffffff;
+  --color-paper: #ffffff;
+  --color-ink-900: #2e2c28;
+  --color-ink-950: #18160f;
+  --color-graphite-600: #657887;
+
+  --color-gray-200: #e6e3db;
+  --color-gray-400: #9a978f;
+  --color-gray-700: #5b584f;
+
+  --color-text-on-dark: #f3f2ef;
+  --color-text-on-dark-secondary: #a6a49d;
+  --color-border-on-dark: rgba(255, 255, 255, 0.12);
+
+  /* Ámbar/naranja — el color característico de 8LEAKS, deliberadamente
+     poco frecuente. #FF6A00 es el tono vivo (líneas, microdetalles sobre
+     superficies de buen contraste); #C25100 es el mismo matiz oscurecido
+     para texto chico sobre --color-paper (categorías) porque #FF6A00 puro
+     solo da 2.87:1 sobre blanco — no alcanza AA para texto. */
+  --color-amber-500: #ff6a00;
+  --color-amber-600: #c25100;
+
+  /* Tipografía — Outfit (cargada en Layout.astro vía Google Fonts,
+     licencia abierta) como fuente principal en todo el sitio, con
+     Arial/Helvetica como respaldo seguro si la carga remota falla. El
+     resto del sistema (jerarquía 72/36/16/14, line-height sólido en
+     tipografía de exhibición, tracking fijo en px, ritmo vertical de
+     24px) sigue aplicando igual sobre esta fuente. */
+  --font-sans: "Outfit", Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+  /* Escala — cada paso corresponde a un uso real del sistema, sin tamaños
+     de relleno. */
+  --text-meta: 0.875rem; /* 14px — eyebrow, categoría, metadata, nav secundario, footer */
+  --text-nav: 0.9375rem; /* 15px — nav principal del Header */
+  --text-body: 1rem; /* 16px — excerpt/dek */
+  --text-hero-support: clamp(1.125rem, 1rem + 0.4vw, 1.375rem); /* ~18-22px — bajada del Hero */
+  --text-post-title: clamp(1.75rem, 1.35rem + 1.8vw, 2.5rem); /* ~28-40px — título de post, tamaño único */
+  --text-section-heading: 1.75rem; /* 28px — "Últimos posts" */
+  --text-hero: clamp(2.6875rem, 1.5375rem + 5.5vw, 5.9375rem); /* ~43-95px — H1 institucional */
+
+  /* Tracking fijo en píxeles (como X): negativo en tipografía de
+     exhibición grande, positivo en texto chico. Deliberadamente NO usa
+     unidades em/rem — no debe escalar junto con el font-size. */
+  --tracking-display: -0.4px;
+  --tracking-body: 0.4px;
+
+  /* line-height "sólido" (ratio 1) en tipografía de exhibición grande;
+     24px fijo como unidad de ritmo vertical para nav/eyebrow/metadata/
+     footer (14-16px), igual que el sistema real de X. */
+  --leading-solid: 1;
+  --leading-meta: 24px;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-padding: clamp(1.25rem, 4vw, 3rem);
+  --container-reading: 720px; /* columna editorial de la página de artículo */
+  --reading-offset: var(--space-9); /* desplaza la columna hacia la derecha en pantallas anchas */
+
+  /* Página de artículo individual — aditivos, la Home no los usa. */
+  --text-article-title: clamp(1.75rem, 1.4rem + 2.2vw, 2.75rem); /* ~28-44px */
+  --text-article-body: 0.9375rem; /* 15px */
+  --leading-relaxed: 1.55;
+
+  /* Bordes */
+  --radius-subtle: 1px;
+  --border-hairline-light: 1px solid var(--color-gray-200);
+  --border-hairline-dark: 1px solid var(--color-border-on-dark);
+}

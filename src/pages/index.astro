@@ -1,41 +1,48 @@
 ---
-// Página de verificación de la Fase 1 — sin diseño visual definitivo.
-// Prueba, de punta a punta, que Content Collections + el schema Zod +
-// la referencia articulo -> autor funcionan sobre la API actual de Astro.
-import { getCollection, getEntry } from "astro:content";
+import { getCollection, getEntry, type CollectionEntry } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import LatestArticles from "../components/LatestArticles.astro";
+import Footer from "../components/Footer.astro";
 
-const articulos = (await getCollection("articulos", ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+type Articulo = CollectionEntry<"articulos">;
+
+const POSTS_LIMIT = 6;
+
+// featured/featuredOrder son una herramienta puramente editorial de orden
+// de aparición — no generan ningún tratamiento visual distinto (todos los
+// posts se ven igual, ver PostRow.astro). Primero los destacados según
+// featuredOrder, después el resto por fecha de publicación descendente.
+function sortForHome(a: Articulo, b: Articulo): number {
+  if (a.data.featured !== b.data.featured) {
+    return a.data.featured ? -1 : 1;
+  }
+  if (a.data.featured && b.data.featured) {
+    const orderA = a.data.featuredOrder ?? Number.POSITIVE_INFINITY;
+    const orderB = b.data.featuredOrder ?? Number.POSITIVE_INFINITY;
+    if (orderA !== orderB) return orderA - orderB;
+  }
+  return b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf();
+}
+
+const publishedArticles = (await getCollection("articulos", ({ data }) => !data.draft)).sort(
+  sortForHome,
 );
 
-const articulosConAutor = await Promise.all(
-  articulos.map(async (articulo) => {
-    const autor = await getEntry(articulo.data.author[0]);
-    return { articulo, autor };
-  }),
-);
+async function withAuthor(article: Articulo) {
+  const author = await getEntry(article.data.author[0]);
+  return { article, author: author ?? null };
+}
+
+const items = await Promise.all(publishedArticles.slice(0, POSTS_LIMIT).map(withAuthor));
 ---
 
-<html lang="es">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>8leaks — verificación de Fase 1</title>
-	</head>
-	<body>
-		<h1>8leaks — bootstrap del proyecto</h1>
-		<p>Esta página existe únicamente para verificar que Content Collections, el schema Zod y la relación artículo → autor funcionan. Se reemplaza por completo en fases posteriores.</p>
-		<ul>
-			{articulosConAutor.map(({ articulo, autor }) => (
-				<li>
-					<strong>{articulo.data.title}</strong>
-					— {articulo.data.category} —
-					por {autor.data.name}
-					({articulo.data.publishedAt.toISOString().slice(0, 10)})
-				</li>
-			))}
-		</ul>
-	</body>
-</html>
+<Layout>
+  <Header />
+  <main>
+    <Hero />
+    <LatestArticles items={items} />
+  </main>
+  <Footer />
+</Layout>

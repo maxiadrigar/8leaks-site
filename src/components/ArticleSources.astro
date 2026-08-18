@@ -1,0 +1,104 @@
+---
+// Sección "Fuentes" — extremadamente limpia: sin cards, sin fondos
+// individuales, sin cajas. Solo se renderiza si el artículo tiene fuentes
+// cargadas (no se infiere ni se inventa nada).
+interface Source {
+  label: string;
+  url?: string;
+  type: string;
+  publisher?: string;
+  accessedAt?: Date;
+}
+
+interface Props {
+  sources: Source[];
+}
+
+const { sources } = Astro.props;
+---
+
+{
+  sources.length > 0 && (
+    <section class="article-sources" aria-labelledby="article-sources-heading">
+      <div class="article-sources__inner">
+        <h2 id="article-sources-heading" class="article-sources__heading">
+          Fuentes
+        </h2>
+        <ul class="article-sources__list">
+          {sources.map((source) => (
+            <li class="article-sources__item">
+              {source.url ? (
+                <a
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="article-sources__link"
+                >
+                  {source.label}
+                </a>
+              ) : (
+                <span class="article-sources__link">{source.label}</span>
+              )}
+              {source.publisher && <span class="article-sources__publisher"> — {source.publisher}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .article-sources {
+    padding-block: var(--space-8);
+  }
+
+  .article-sources__inner {
+    width: min(var(--container-reading), 100%);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+  }
+
+  @media (min-width: 1024px) {
+    .article-sources__inner {
+      margin-left: calc(50% - (var(--container-reading) / 2) + var(--reading-offset));
+      margin-right: 0;
+    }
+  }
+
+  .article-sources__heading {
+    color: var(--color-ink-900);
+    font-size: var(--text-section-heading);
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+    margin-bottom: var(--space-5);
+  }
+
+  .article-sources__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .article-sources__item {
+    padding-block: var(--space-3);
+    border-top: var(--border-hairline-light);
+    font-size: var(--text-meta);
+    color: var(--color-gray-700);
+    line-height: var(--leading-meta);
+  }
+
+  .article-sources__item:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-sources__link {
+    color: var(--color-ink-900);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .article-sources__publisher {
+    color: var(--color-graphite-600);
+  }
+</style>

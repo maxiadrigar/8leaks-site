@@ -1,0 +1,71 @@
+---
+// Firma institucional de 8LEAKS en la columna izquierda de la página de
+// artículo — logo circular + nombre + handle, únicamente. Inspirada en la
+// identidad de cuenta que aparece junto a los artículos de blog.x.com,
+// trasladada a la identidad visual propia de 8LEAKS (sin copiar marca).
+//
+// Posicionamiento: absoluto dentro de <main> (position:relative en
+// [slug].astro). Ancla cerca del borde izquierdo (--container-padding),
+// deliberadamente independiente del desplazamiento de la columna de
+// lectura (--reading-offset) para maximizar el aire entre ambos bloques.
+// Solo visible en desktop (≥1024px) — en mobile/tablet no hay espacio
+// sobrante a la izquierda para alojarla, así que se oculta por completo
+// en vez de forzar una versión horizontal.
+---
+
+<div class="article-brand">
+  <img
+    src="/brand/logo-redondo.png"
+    alt="8LEAKS"
+    class="article-brand__logo"
+    width="1254"
+    height="1254"
+  />
+  <p class="article-brand__name">8LEAKS</p>
+  <p class="article-brand__handle">@8leaks</p>
+</div>
+
+<style>
+  .article-brand {
+    --article-brand-width: 152px;
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .article-brand {
+      display: block;
+      position: absolute;
+      top: calc(var(--space-6) + var(--leading-meta) + var(--space-4));
+      /* Ancla cerca del borde izquierdo de forma independiente del
+         desplazamiento del artículo (--reading-offset) — a propósito, para
+         maximizar la separación entre ambos bloques. */
+      left: calc(var(--container-padding) + 45px);
+      width: var(--article-brand-width);
+    }
+  }
+
+  .article-brand__logo {
+    display: block;
+    width: 108px;
+    height: 108px;
+  }
+
+  .article-brand__name {
+    margin-top: var(--space-4);
+    color: var(--color-black);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: var(--leading-solid);
+    letter-spacing: normal;
+  }
+
+  .article-brand__handle {
+    margin-top: var(--space-1);
+    color: var(--color-black);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    line-height: var(--leading-meta);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+import type { CollectionEntry } from "astro:content";
+import PostRow from "./PostRow.astro";
+
+interface Item {
+  article: CollectionEntry<"articulos">;
+  author: CollectionEntry<"autores"> | null;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="latest-posts" aria-labelledby="latest-posts-heading">
+  <div class="container latest-posts__grid">
+    <h2 id="latest-posts-heading" class="latest-posts__heading">Últimos posts</h2>
+
+    <div class="latest-posts__list">
+      {
+        items.length > 0 ? (
+          items.map(({ article, author }) => <PostRow article={article} author={author} />)
+        ) : (
+          <p class="latest-posts__empty">Las próximas publicaciones aparecerán aquí.</p>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .latest-posts {
+    background: var(--color-paper);
+    padding-block: var(--space-9);
+  }
+
+  .latest-posts__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: var(--space-6);
+  }
+
+  .latest-posts__heading {
+    color: var(--color-ink-900);
+    font-size: var(--text-section-heading);
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+  }
+
+  .latest-posts__list > :global(.post-row) + :global(.post-row) {
+    border-top: var(--border-hairline-light);
+  }
+
+  /* El primer post arranca a la misma altura que "Últimos posts": sin el
+     padding-top que separa el resto de las filas entre sí. */
+  .latest-posts__list > :global(.post-row:first-child) {
+    padding-top: 0;
+  }
+
+  .latest-posts__empty {
+    color: var(--color-graphite-600);
+    font-size: var(--text-hero-support);
+    padding-block: var(--space-7);
+  }
+
+  @media (min-width: 768px) {
+    .latest-posts__grid {
+      grid-template-columns: minmax(180px, 240px) 1fr;
+      gap: var(--space-8);
+    }
+  }
+</style>
