@@ -13,6 +13,13 @@ not design a new page in isolation from the existing system — audit
 reusable tokens/components, propose the plan, and wait for approval before
 implementing any new page or significant visual change.
 
+**Before creating or modifying a category page** (`/politica/`,
+`/economia/`, `/geopolitica/`, `/otros-blogs/`, etc.), read the "Category
+Pages" section in `docs/DESIGN-SYSTEM.md` and use `/politica/` as the
+canonical reference — it is the approved master template for category
+pages, reused structurally (Header, CategoryBanner, LatestArticles/PostRow,
+Footer), not reinterpreted per page.
+
 ## 8LEAKS — Editorial System
 
 The conceptual and content-architecture source of truth (official definition

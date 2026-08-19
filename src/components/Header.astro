@@ -10,17 +10,23 @@ const NAV_ITEMS = [
   { label: "Geopolítica", plannedPath: "/geopolitica/" },
   { label: "Psicología", plannedPath: "/psicologia/" },
 ];
+
+interface Props {
+  transparentOverHero?: boolean;
+}
+
+const { transparentOverHero = false } = Astro.props;
 ---
 
-<header class="site-header">
+<header class="site-header" data-transparent-over-hero={transparentOverHero || undefined}>
   <div class="container site-header__inner">
     <div class="site-header__brand">
       <img
         src="/brand/8leaks-logo-horizontal.png"
         alt="8LEAKS"
         class="site-header__logo"
-        width="326"
-        height="109"
+        width="2551"
+        height="348"
       />
     </div>
 
@@ -65,9 +71,17 @@ const NAV_ITEMS = [
     transform: translateY(-100%);
   }
 
+  .site-header.is-transparent {
+    background: transparent;
+    border-bottom-color: transparent;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .site-header {
-      transition: transform 320ms ease;
+      transition:
+        transform 320ms ease,
+        background-color 240ms ease,
+        border-color 240ms ease;
     }
   }
 
@@ -76,12 +90,12 @@ const NAV_ITEMS = [
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
-    padding-block: 7px;
+    padding-block: 5px;
   }
 
   .site-header__logo {
     display: block;
-    height: 48px;
+    height: 18px;
     width: auto;
   }
 
@@ -246,7 +260,7 @@ const NAV_ITEMS = [
 
   // Header "smart": se oculta al bajar, reaparece al subir o al detenerse
   // el scroll. No se oculta con el menú mobile abierto ni cerca del tope.
-  const header = document.querySelector(".site-header");
+  const header = document.querySelector<HTMLElement>(".site-header");
   if (header) {
     const HIDE_THRESHOLD = 80;
     let lastScrollY = window.scrollY;
@@ -280,5 +294,26 @@ const NAV_ITEMS = [
       },
       { passive: true },
     );
+  }
+
+  // Header transparente sobre el banner (opt-in vía transparentOverHero).
+  // Estado por defecto server-rendered: negro. Solo pasa a transparente si
+  // JS confirma, vía IntersectionObserver, que el banner (data-header-overlay-target)
+  // sigue visible debajo del Header. Independiente del auto-hide (is-hidden).
+  if (header && header.dataset.transparentOverHero !== undefined) {
+    const overlayTarget = document.querySelector("[data-header-overlay-target]");
+
+    if (overlayTarget && "IntersectionObserver" in window) {
+      const headerHeight = header.getBoundingClientRect().height || 51;
+
+      const overlayObserver = new IntersectionObserver(
+        ([entry]) => {
+          header.classList.toggle("is-transparent", entry.isIntersecting);
+        },
+        { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0 },
+      );
+
+      overlayObserver.observe(overlayTarget);
+    }
   }
 </script>

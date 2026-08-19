@@ -1,0 +1,27 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import CategoryBanner from "../../components/CategoryBanner.astro";
+import LatestArticles from "../../components/LatestArticles.astro";
+import { getPublishedArticlesByCategory } from "../../lib/articles";
+
+const items = await getPublishedArticlesByCategory("politica");
+---
+
+<Layout
+  title="Política — 8LEAKS"
+  description="Política argentina, actualidad, análisis e investigación en 8LEAKS."
+>
+  <Header transparentOverHero />
+  <main>
+    <CategoryBanner
+      title="Todo es política"
+      subtitle="Argentina"
+      imageSrc="/banners/banner-politica.png"
+      overlayHeader
+    />
+    <LatestArticles items={items} />
+  </main>
+  <Footer />
+</Layout>

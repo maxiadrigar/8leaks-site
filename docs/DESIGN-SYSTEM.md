@@ -94,11 +94,113 @@ Mantener la identidad **no** significa clonar el layout de Home o de artículo e
 
 Desktop puede usar composiciones editoriales ambiciosas y mucho espacio negativo (p. ej. la firma lateral del artículo, visible solo ≥1024px). Tablet preserva la jerarquía. Mobile prioriza lectura, claridad, navegación y jerarquía por sobre preservar layouts de múltiples columnas — se simplifica sin forzar el desktop a pantallas chicas (ver cómo `ArticleBrandIdentity` se oculta por completo en mobile en vez de forzar una versión horizontal).
 
-## 11. Proceso para páginas nuevas
+## 11. Category Pages — `/politica/` es la plantilla maestra
+
+**Estado: APROBADO.** `src/pages/politica/index.astro` es la referencia
+canónica visual de toda página de categoría de 8LEAKS (`/economia/`,
+`/geopolitica/`, `/otros-blogs/`, y cualquier otra sección temática futura).
+No es "una página más que se parece a Política" — es la plantilla: las
+páginas de categoría comparten el mismo `Header`, `CategoryBanner`,
+`LatestArticles`/`PostRow` y `Footer` sin reimplementar CSS por página.
+Consistencia aquí significa **reutilización estructural**, no "quedó
+parecido".
+
+**Composición de una página de categoría:**
+
+```
+<Header transparentOverHero />
+<main>
+  <CategoryBanner title=... subtitle=... imageSrc=... overlayHeader />
+  <LatestArticles items={...} />
+</main>
+<Footer />
+```
+
+Lo único que cambia entre categorías: el `imageSrc`/color del banner, el
+`title`/`subtitle` de texto, el `title`/`description` de SEO en `Layout`, y
+el filtro de artículos (`getPublishedArticlesByCategory("<category>")`, en
+`src/lib/articles.ts`). Todo lo demás — Header, CategoryBanner, PostRow,
+Footer, tokens, spacing — se reutiliza sin cambios.
+
+**Header transparente-sobre-banner** (patrón aprobado, no experimental):
+
+- `<Header transparentOverHero />` activa el comportamiento opt-in (default
+  `false`, no afecta a Home ni al artículo individual, que siguen usando
+  `<Header />` a secas).
+- Mientras el `CategoryBanner` (con `overlayHeader`, que agrega
+  `data-header-overlay-target`) sigue intersectando la franja bajo el
+  Header, el Header queda transparente (`.is-transparent`: `background:
+  transparent`, `border-bottom-color: transparent`). En cuanto el banner
+  deja de intersectar esa franja, el Header vuelve a negro
+  (`var(--color-black)`). Detección vía `IntersectionObserver` con
+  `rootMargin` igual a la altura real del Header (medida en runtime con
+  `getBoundingClientRect()`, no un `scrollY` fijo).
+- Fallback seguro: el HTML server-rendered siempre arranca negro. Solo pasa
+  a transparente si JS confirma banner + observer disponibles.
+- El auto-hide existente del Header (`.is-hidden` al bajar, reaparece al
+  subir o al detenerse) es independiente de `.is-transparent` — ambos
+  estados conviven sin interferirse, y no se modifica su lógica para
+  páginas de categoría.
+- Mobile: mismo comportamiento, mismo Header, mismo menú (fondo negro sólido
+  al abrirse aunque el Header exterior esté transparente).
+
+**Valores actuales del Header** (medidos en runtime, no recalculados a
+mano — si el Header cambia, volver a medir en vez de reusar estos números):
+
+- Altura total: **51px** — la fija el nav-toggle/`.primary-nav__link`
+  (40px), no el logo.
+- Logo (`.site-header__logo`, `8leaks-logo-horizontal.png`): **18px** de
+  alto. El archivo fue recortado para eliminar relleno transparente
+  (quedó en 2551×348px); `height` en CSS ahora corresponde 1:1 al tamaño
+  visible real.
+- `padding-block` del `.site-header__inner`: **5px**.
+
+**CategoryBanner — valores actuales:**
+
+- `overlayHeader` (default `false`): agrega `data-header-overlay-target` y
+  la clase `.category-banner--overlay`, que extiende el banner detrás del
+  Header transparente compensando exactamente la altura del Header
+  (`margin-top: -51px; padding-top: 51px;`) sin mover el borde inferior del
+  banner ni el texto de su posición visual habitual. Si la altura del
+  Header cambia, este valor debe actualizarse junto con el fallback del
+  `IntersectionObserver` en `Header.astro`.
+- Altura del banner: `min-height: clamp(320px, 42vh, 480px)` (desktop),
+  `clamp(240px, 46vh, 360px)` (≤640px) — no es el mismo componente que
+  `Hero.astro` de Home, tiene su propia escala.
+- Título (`.category-banner__title`): **no** usa `--text-hero` (ese token
+  es exclusivo del H1 institucional de Home) — usa una escala propia y más
+  chica, `clamp(2rem, 1.2rem + 3.8vw, 4rem)` (32px–64px), pensada
+  específicamente para el H1 del banner de categoría. Mismo peso (700),
+  `line-height` (`--leading-solid`) y `letter-spacing`
+  (`--tracking-display`) que el resto de la tipografía de exhibición.
+- Subtítulo: `--text-hero-support`, sin cambios.
+
+**Mapa de banners aprobado** (`public/banners/`, no editar/regenerar sin
+autorización):
+
+| Categoría | Archivo | Color |
+|---|---|---|
+| Política | `banner-politica.png` | Azul |
+| Economía | `banner-economia.png` | Verde |
+| Geopolítica | `banner-geopolitica.png` | Coral |
+| Otros Blogs | `banner-otros-blogs.png` | Violeta |
+
+Cada categoría tiene identidad cromática propia a través de su banner —
+esto es intencional y no debe uniformarse a un solo color. El sistema
+visual (tipografía, spacing, componentes, comportamiento) sí debe
+mantenerse idéntico entre categorías.
+
+**Cualquier cambio futuro a este patrón** (Header, CategoryBanner,
+comportamiento transparente/negro, tamaños, spacing) debe hacerse primero
+sobre la plantilla maestra (`/politica/` y sus componentes) y con
+aprobación explícita — nunca directamente en una página de categoría
+individual, para no divergir el sistema entre secciones.
+
+## 12. Proceso para páginas nuevas
 
 Antes de escribir código para cualquier página nueva (categorías, autor, "Sobre 8LEAKS", contacto, búsqueda, tags, archivos, etc.):
 
-1. Revisar Home, artículo individual, Header/Footer, `tokens.css`/`global.css` y los componentes reutilizables existentes.
+1. Revisar Home, artículo individual, Header/Footer, `tokens.css`/`global.css` y los componentes reutilizables existentes. **Para una página de categoría específicamente, revisar además la sección 11 y usar `/politica/` como referencia canónica** — no reinterpretar el patrón desde cero.
 2. Determinar qué tokens/componentes/patrones existentes aplican.
 3. Proponer la composición nueva solo donde el sistema no alcance — priorizando reutilización sobre creación, pero sin forzar componentes donde no correspondan conceptualmente.
 4. Presentar auditoría + plan (componentes a reutilizar, qué se crea, archivos a tocar, decisiones nuevas) y **esperar aprobación** antes de implementar cualquier página nueva o cambio visual importante.
