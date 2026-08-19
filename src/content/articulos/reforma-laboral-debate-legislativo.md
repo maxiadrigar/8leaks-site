@@ -7,6 +7,7 @@ coverImage:
 author:
   - maria-fernandez
 category: politica
+editorialType: noticia
 tags:
   - reforma-laboral
   - congreso

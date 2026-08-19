@@ -46,16 +46,34 @@ collections:
         search_fields: [name]
         display_fields: [name]
         value_field: "{{slug}}"
-      - label: Categoría
+      - label: Sección
         name: category
         widget: select
         options:
           - { label: Política, value: politica }
           - { label: Economía, value: economia }
           - { label: Geopolítica, value: geopolitica }
-          - { label: Sociedad, value: sociedad }
-          - { label: Psicología y comportamiento, value: psicologia-comportamiento }
-          - { label: Análisis y opinión, value: analisis-opinion }
+          - { label: Otros Blogs, value: otros-blogs }
+      - label: Tipo editorial
+        name: editorialType
+        widget: select
+        options:
+          - { label: Noticia, value: noticia }
+          - { label: Análisis, value: analisis }
+          - { label: Investigación, value: investigacion }
+          - { label: Opinión, value: opinion }
+          - { label: Ensayo, value: ensayo }
+      - label: Subcategoría de Otros Blogs
+        name: subcategory
+        widget: select
+        required: false
+        hint: "Completar solo cuando Sección = Otros Blogs. Dejar vacío en el resto de las secciones."
+        options:
+          - { label: Tecnología, value: tecnologia }
+          - { label: Cultura, value: cultura }
+          - { label: Educación, value: educacion }
+          - { label: Deporte, value: deporte }
+          - { label: Otros, value: otros }
       - { label: Tags, name: tags, widget: list, required: false, default: [] }
       - label: Fuentes
         name: sources

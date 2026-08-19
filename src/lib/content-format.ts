@@ -5,9 +5,26 @@ export const CATEGORY_LABELS: Record<string, string> = {
   politica: "Política",
   economia: "Economía",
   geopolitica: "Geopolítica",
-  sociedad: "Sociedad",
-  "psicologia-comportamiento": "Psicología",
-  "analisis-opinion": "Análisis y opinión",
+  "otros-blogs": "Otros Blogs",
+};
+
+// No usados todavía en ninguna vista (editorialType/subcategory no se
+// muestran visualmente en esta fase) — preparados para las fases
+// siguientes de la migración editorial. Ver docs/EDITORIAL-SYSTEM.md.
+export const EDITORIAL_TYPE_LABELS: Record<string, string> = {
+  noticia: "Noticia",
+  analisis: "Análisis",
+  investigacion: "Investigación",
+  opinion: "Opinión",
+  ensayo: "Ensayo",
+};
+
+export const SUBCATEGORY_LABELS: Record<string, string> = {
+  tecnologia: "Tecnología",
+  cultura: "Cultura",
+  educacion: "Educación",
+  deporte: "Deporte",
+  otros: "Otros",
 };
 
 const dateFormatter = new Intl.DateTimeFormat("es-AR", {

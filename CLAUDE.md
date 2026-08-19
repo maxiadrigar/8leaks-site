@@ -13,6 +13,18 @@ not design a new page in isolation from the existing system — audit
 reusable tokens/components, propose the plan, and wait for approval before
 implementing any new page or significant visual change.
 
+## 8LEAKS — Editorial System
+
+The conceptual and content-architecture source of truth (official definition
+of 8LEAKS, editorial principles, V1 sections/`category`, `editorialType`,
+`subcategory` under "Otros Blogs", tags, sources, authors, and the evolution
+philosophy toward future DATA/ESPECIALES branches) is documented in
+**[docs/EDITORIAL-SYSTEM.md](docs/EDITORIAL-SYSTEM.md)**.
+
+**Before changing `src/content.config.ts`, `public/admin/config.yml`, or any
+editorial classification field, read that file first.** It governs content
+architecture the same way DESIGN-SYSTEM.md governs the visual layer.
+
 ## Development
 
 When starting the dev server, use background mode:
