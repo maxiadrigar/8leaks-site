@@ -1,14 +1,24 @@
 ---
-// Los items de navegación son rutas planificadas (fase de categorías, aún
-// no construida). Se muestran como texto con la tipografía/espaciado de un
-// enlace, pero deliberadamente no son <a>: evita 404 y href="#" mientras la
-// ruta no existe. Cuando se construyan las páginas de categoría, se activan
-// como enlaces reales sin cambios visuales.
+// Navegación principal V1 — enlaces reales a las cuatro páginas de
+// categoría ya implementadas.
 const NAV_ITEMS = [
-  { label: "Política", plannedPath: "/politica/" },
-  { label: "Economía", plannedPath: "/economia/" },
-  { label: "Geopolítica", plannedPath: "/geopolitica/" },
-  { label: "Psicología", plannedPath: "/psicologia/" },
+  { label: "Política", path: "/politica/" },
+  { label: "Economía", path: "/economia/" },
+  { label: "Geopolítica", path: "/geopolitica/" },
+  { label: "Otros Blogs", path: "/otros-blogs/" },
+];
+
+// Submenú de "Otros Blogs". "Blog" es la portada general, ya tiene ruta
+// real. Educación/Tecnología/Cultura/Deportes son subcategorías del
+// schema (ver content.config.ts) pero todavía no tienen página propia —
+// se muestran preparadas, sin href, mismo patrón que usa Footer.astro
+// para INFO_LINKS (no crear enlaces a rutas inexistentes).
+const OTHER_BLOGS_SUBMENU = [
+  { label: "Blog", path: "/otros-blogs/" },
+  { label: "Educación", path: null },
+  { label: "Tecnología", path: null },
+  { label: "Cultura", path: null },
+  { label: "Deportes", path: null },
 ];
 
 interface Props {
@@ -20,7 +30,7 @@ const { transparentOverHero = false } = Astro.props;
 
 <header class="site-header" data-transparent-over-hero={transparentOverHero || undefined}>
   <div class="container site-header__inner">
-    <div class="site-header__brand">
+    <a href="/" class="site-header__brand" aria-label="8LEAKS — Inicio">
       <img
         src="/brand/8leaks-logo-horizontal.png"
         alt="8LEAKS"
@@ -28,7 +38,7 @@ const { transparentOverHero = false } = Astro.props;
         width="2551"
         height="348"
       />
-    </div>
+    </a>
 
     <button
       type="button"
@@ -44,13 +54,74 @@ const { transparentOverHero = false } = Astro.props;
     <nav class="primary-nav" id="primary-nav" aria-label="Secciones principales">
       <ul class="primary-nav__list">
         {
-          NAV_ITEMS.map((item) => (
-            <li>
-              <span class="primary-nav__link" data-planned-path={item.plannedPath}>
-                {item.label}
-              </span>
-            </li>
-          ))
+          NAV_ITEMS.map((item) =>
+            item.label === "Otros Blogs" ? (
+              <li class="primary-nav__item primary-nav__item--dropdown">
+                <a
+                  class="primary-nav__link dropdown__trigger"
+                  href={item.path}
+                  aria-expanded="false"
+                  aria-controls="other-blogs-panel"
+                >
+                  {item.label}
+                </a>
+
+                <div class="dropdown__panel" id="other-blogs-panel" aria-hidden="true">
+                  <ul class="dropdown__list">
+                    {
+                      OTHER_BLOGS_SUBMENU.map((sub) => (
+                        <li>
+                          {sub.path ? (
+                            <a class="dropdown__link" href={sub.path}>
+                              {sub.label}
+                            </a>
+                          ) : (
+                            <span class="dropdown__link dropdown__link--pending">
+                              {sub.label}
+                            </span>
+                          )}
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+
+                <button
+                  type="button"
+                  class="dropdown__mobile-toggle"
+                  aria-expanded="false"
+                  aria-controls="other-blogs-mobile-list"
+                  aria-label="Mostrar subcategorías de Otros Blogs"
+                >
+                  <span class="dropdown__mobile-chevron" aria-hidden="true" />
+                </button>
+
+                <ul class="dropdown__mobile-list" id="other-blogs-mobile-list">
+                  {
+                    OTHER_BLOGS_SUBMENU.map((sub) => (
+                      <li>
+                        {sub.path ? (
+                          <a class="dropdown__mobile-link" href={sub.path}>
+                            {sub.label}
+                          </a>
+                        ) : (
+                          <span class="dropdown__mobile-link dropdown__mobile-link--pending">
+                            {sub.label}
+                          </span>
+                        )}
+                      </li>
+                    ))
+                  }
+                </ul>
+              </li>
+            ) : (
+              <li>
+                <a class="primary-nav__link" href={item.path}>
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )
         }
       </ul>
     </nav>
@@ -170,10 +241,94 @@ const { transparentOverHero = false } = Astro.props;
     line-height: var(--leading-meta);
     letter-spacing: var(--tracking-body);
     color: var(--color-text-on-dark);
-    cursor: default;
+    text-decoration: none;
   }
 
   .primary-nav__link:hover {
+    opacity: 0.6;
+  }
+
+  /* Dropdown de "Otros Blogs" — versión mobile por defecto (integrada al
+     menú oscuro existente, sin panel blanco flotante). El panel desktop
+     queda oculto hasta el breakpoint de 768px. */
+  .primary-nav__item--dropdown {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .dropdown__trigger {
+    flex: 1;
+  }
+
+  .dropdown__panel {
+    display: none;
+  }
+
+  .dropdown__mobile-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .dropdown__mobile-chevron {
+    width: 7px;
+    height: 7px;
+    border-right: 1px solid var(--color-text-on-dark);
+    border-bottom: 1px solid var(--color-text-on-dark);
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dropdown__mobile-chevron {
+      transition: transform 180ms ease;
+    }
+  }
+
+  .dropdown__mobile-toggle[aria-expanded="true"] .dropdown__mobile-chevron {
+    transform: rotate(225deg);
+  }
+
+  .dropdown__mobile-list {
+    flex-basis: 100%;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dropdown__mobile-list {
+      transition: max-height 0.2s ease;
+    }
+  }
+
+  .dropdown__mobile-list.is-open {
+    max-height: 240px;
+  }
+
+  .dropdown__mobile-link {
+    display: block;
+    padding-block: var(--space-2);
+    padding-inline-start: var(--space-4);
+    font-size: var(--text-nav);
+    font-weight: 400;
+    line-height: var(--leading-meta);
+    letter-spacing: var(--tracking-body);
+    color: var(--color-text-on-dark-secondary);
+    text-decoration: none;
+    cursor: default;
+  }
+
+  a.dropdown__mobile-link {
+    cursor: pointer;
+  }
+
+  a.dropdown__mobile-link:hover {
     opacity: 0.6;
   }
 
@@ -210,6 +365,93 @@ const { transparentOverHero = false } = Astro.props;
 
     .primary-nav__link {
       padding-block: var(--space-2);
+    }
+
+    /* Dropdown de "Otros Blogs" — versión desktop: panel blanco editorial,
+       fuera del flujo (position: absolute), sin layout shift. Visibilidad
+       gobernada únicamente por la clase .is-open (aplicada por script vía
+       hover/focus/Escape/click-afuera) — una sola fuente de verdad, sin
+       mezclar con :hover/:focus-within en CSS. */
+    .primary-nav__item--dropdown {
+      position: relative;
+      display: block;
+    }
+
+    .dropdown__mobile-toggle,
+    .dropdown__mobile-list {
+      display: none;
+    }
+
+    .dropdown__panel {
+      display: block;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1;
+      min-width: 180px;
+      background: var(--color-paper);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-subtle);
+      padding-block: var(--space-2);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-4px);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .dropdown__panel {
+        transition:
+          opacity 180ms ease,
+          transform 180ms ease,
+          visibility 0s linear 180ms;
+      }
+    }
+
+    .primary-nav__item--dropdown.is-open .dropdown__panel {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .primary-nav__item--dropdown.is-open .dropdown__panel {
+        transition:
+          opacity 180ms ease,
+          transform 180ms ease,
+          visibility 0s linear 0s;
+      }
+    }
+
+    .dropdown__list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dropdown__list li + li {
+      border-top: var(--border-hairline-light);
+    }
+
+    .dropdown__link {
+      display: block;
+      padding-block: var(--space-3);
+      padding-inline: var(--space-5);
+      font-size: var(--text-nav);
+      font-weight: 700;
+      line-height: var(--leading-meta);
+      color: var(--color-ink-900);
+      text-decoration: none;
+      cursor: default;
+      white-space: nowrap;
+    }
+
+    a.dropdown__link {
+      cursor: pointer;
+    }
+
+    a.dropdown__link:hover {
+      background: var(--color-gray-200);
     }
   }
 </style>
@@ -258,6 +500,71 @@ const { transparentOverHero = false } = Astro.props;
     });
   }
 
+  // Dropdown de "Otros Blogs". Una sola fuente de verdad (.is-open en el
+  // <li>) sincronizada por hover, foco y teclado — evita el conflicto
+  // clásico entre :hover/:focus-within en CSS y el cierre por Escape
+  // (que debe poder cerrar el panel aunque el foco siga en el trigger).
+  // Desktop y mobile comparten el mismo estado abierto/cerrado en el DOM,
+  // pero mobile usa su propio botón (.dropdown__mobile-toggle) porque en
+  // mobile no hay hover.
+  const dropdownItem = document.querySelector<HTMLElement>(".primary-nav__item--dropdown");
+  if (dropdownItem) {
+    const trigger = dropdownItem.querySelector<HTMLAnchorElement>(".dropdown__trigger");
+    const panel = dropdownItem.querySelector<HTMLElement>(".dropdown__panel");
+
+    const openDropdown = () => {
+      dropdownItem.classList.add("is-open");
+      trigger?.setAttribute("aria-expanded", "true");
+      panel?.setAttribute("aria-hidden", "false");
+    };
+
+    const closeDropdown = () => {
+      dropdownItem.classList.remove("is-open");
+      trigger?.setAttribute("aria-expanded", "false");
+      panel?.setAttribute("aria-hidden", "true");
+    };
+
+    // mouseenter/mouseleave no burbujean desde los hijos (el panel es
+    // descendiente del <li>), así que recorrer con el mouse del trigger
+    // al panel nunca dispara mouseleave de más — no hace falta ningún
+    // delay artificial para evitar flicker.
+    dropdownItem.addEventListener("mouseenter", openDropdown);
+    dropdownItem.addEventListener("mouseleave", closeDropdown);
+
+    dropdownItem.addEventListener("focusin", openDropdown);
+    dropdownItem.addEventListener("focusout", (event) => {
+      const next = event.relatedTarget;
+      if (next instanceof Node && dropdownItem.contains(next)) return;
+      closeDropdown();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && dropdownItem.classList.contains("is-open")) {
+        closeDropdown();
+        trigger?.focus();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!dropdownItem.classList.contains("is-open")) return;
+      const target = event.target;
+      if (target instanceof Node && !dropdownItem.contains(target)) {
+        closeDropdown();
+      }
+    });
+
+    // Mobile: disclosure propio, independiente del estado desktop de arriba.
+    const mobileToggle = dropdownItem.querySelector<HTMLButtonElement>(".dropdown__mobile-toggle");
+    const mobileList = dropdownItem.querySelector<HTMLElement>(".dropdown__mobile-list");
+
+    if (mobileToggle && mobileList) {
+      mobileToggle.addEventListener("click", () => {
+        const isOpen = mobileList.classList.toggle("is-open");
+        mobileToggle.setAttribute("aria-expanded", String(isOpen));
+      });
+    }
+  }
+
   // Header "smart": se oculta al bajar, reaparece al subir o al detenerse
   // el scroll. No se oculta con el menú mobile abierto ni cerca del tope.
   const header = document.querySelector<HTMLElement>(".site-header");
@@ -274,7 +581,8 @@ const { transparentOverHero = false } = Astro.props;
       () => {
         const currentY = window.scrollY;
 
-        if (nav && nav.classList.contains("is-open")) {
+        const dropdownOpen = dropdownItem?.classList.contains("is-open");
+        if ((nav && nav.classList.contains("is-open")) || dropdownOpen) {
           lastScrollY = currentY;
           return;
         }

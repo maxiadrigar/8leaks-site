@@ -1,13 +1,13 @@
 ---
-// Mismo criterio que en Header: rutas planificadas, todavía no enlaces
-// reales. "Información" apunta a páginas institucionales que tampoco
-// existen todavía (no hay página de autor único, "sobre" ni contacto),
-// así que se muestran igual que las categorías: preparadas, sin href.
+// Secciones: enlaces reales a las cuatro páginas de categoría ya
+// implementadas (mismo mapa que Header.astro). "Información" sigue como
+// rutas planificadas, sin href: esas páginas institucionales (autor único,
+// "sobre", contacto) todavía no existen.
 const SECTION_LINKS = [
-  { label: "Política", plannedPath: "/politica/" },
-  { label: "Economía", plannedPath: "/economia/" },
-  { label: "Geopolítica", plannedPath: "/geopolitica/" },
-  { label: "Psicología", plannedPath: "/psicologia/" },
+  { label: "Política", path: "/politica/" },
+  { label: "Economía", path: "/economia/" },
+  { label: "Geopolítica", path: "/geopolitica/" },
+  { label: "Otros Blogs", path: "/otros-blogs/" },
 ];
 
 const INFO_LINKS = [
@@ -29,9 +29,9 @@ const year = new Date().getFullYear();
             {
               SECTION_LINKS.map((item) => (
                 <li>
-                  <span class="site-footer__link" data-planned-path={item.plannedPath}>
+                  <a class="site-footer__link" href={item.path}>
                     {item.label}
-                  </span>
+                  </a>
                 </li>
               ))
             }
@@ -115,6 +115,14 @@ const year = new Date().getFullYear();
     font-weight: 400;
     line-height: var(--leading-meta);
     cursor: default;
+  }
+
+  /* Las Secciones ya son <a> reales (ver SECTION_LINKS); Información
+     todavía son <span> preparados sin href (ver INFO_LINKS) y conservan el
+     cursor: default de arriba. */
+  a.site-footer__link {
+    cursor: pointer;
+    text-decoration: none;
   }
 
   .site-footer__brand-block {
