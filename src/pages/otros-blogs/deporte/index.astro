@@ -1,0 +1,26 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import SubcategoryHeader from "../../../components/SubcategoryHeader.astro";
+import LatestArticles from "../../../components/LatestArticles.astro";
+import { getPublishedArticlesByCategory } from "../../../lib/articles";
+
+const items = await getPublishedArticlesByCategory("otros-blogs", "deporte");
+---
+
+<Layout
+  title="Deportes — 8LEAKS"
+  description="Deporte, rendimiento, competencia y análisis en 8LEAKS."
+>
+  <Header />
+  <main>
+    <SubcategoryHeader
+      parentLabel="Otros Blogs"
+      title="Deportes"
+      subtitle="Deporte, entrenamiento y rendimiento."
+    />
+    <LatestArticles items={items} dividerColor="var(--color-violet-500)" />
+  </main>
+  <Footer />
+</Layout>

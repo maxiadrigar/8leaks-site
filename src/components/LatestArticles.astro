@@ -9,12 +9,21 @@ interface Item {
 
 interface Props {
   items: Item[];
+  // Color del divisor entre posts, como valor CSS (p. ej. "var(--color-violet-500)").
+  // Opcional: por defecto usa --border-hairline-light (gray-200), sin cambiar
+  // el comportamiento existente en Home ni en las Category Pages. Lo usan las
+  // Subcategory Pages (ver SubcategoryHeader.astro) para su acento violeta.
+  dividerColor?: string;
 }
 
-const { items } = Astro.props;
+const { items, dividerColor } = Astro.props;
 ---
 
-<section class="latest-posts" aria-labelledby="latest-posts-heading">
+<section
+  class="latest-posts"
+  aria-labelledby="latest-posts-heading"
+  style={dividerColor ? `--latest-posts-divider: ${dividerColor}` : undefined}
+>
   <div class="container latest-posts__grid">
     <h2 id="latest-posts-heading" class="latest-posts__heading">Últimos posts</h2>
 
@@ -51,7 +60,7 @@ const { items } = Astro.props;
   }
 
   .latest-posts__list > :global(.post-row) + :global(.post-row) {
-    border-top: var(--border-hairline-light);
+    border-top: 1px solid var(--latest-posts-divider, var(--color-gray-200));
   }
 
   /* El primer post arranca a la misma altura que "Últimos posts": sin el

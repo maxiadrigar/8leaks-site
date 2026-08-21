@@ -8,17 +8,16 @@ const NAV_ITEMS = [
   { label: "Otros Blogs", path: "/otros-blogs/" },
 ];
 
-// Submenú de "Otros Blogs". "Blog" es la portada general, ya tiene ruta
-// real. Educación/Tecnología/Cultura/Deportes son subcategorías del
-// schema (ver content.config.ts) pero todavía no tienen página propia —
-// se muestran preparadas, sin href, mismo patrón que usa Footer.astro
-// para INFO_LINKS (no crear enlaces a rutas inexistentes).
+// Submenú de "Otros Blogs". Las cinco entradas ya tienen página propia
+// (Subcategory Pages, ver SubcategoryHeader.astro) — todas con ruta real.
+// Nota: el label visible es "Deportes" pero la ruta y el valor de
+// subcategory en el schema son "deporte" (ver content.config.ts).
 const OTHER_BLOGS_SUBMENU = [
   { label: "Blog", path: "/otros-blogs/" },
-  { label: "Educación", path: null },
-  { label: "Tecnología", path: null },
-  { label: "Cultura", path: null },
-  { label: "Deportes", path: null },
+  { label: "Educación", path: "/otros-blogs/educacion/" },
+  { label: "Tecnología", path: "/otros-blogs/tecnologia/" },
+  { label: "Cultura", path: "/otros-blogs/cultura/" },
+  { label: "Deportes", path: "/otros-blogs/deporte/" },
 ];
 
 interface Props {

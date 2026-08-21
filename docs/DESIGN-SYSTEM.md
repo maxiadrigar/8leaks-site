@@ -196,7 +196,80 @@ sobre la plantilla maestra (`/politica/` y sus componentes) y con
 aprobación explícita — nunca directamente en una página de categoría
 individual, para no divergir el sistema entre secciones.
 
-## 12. Proceso para páginas nuevas
+## 12. Subcategory Pages — `/otros-blogs/tecnologia/` es la plantilla maestra
+
+**Estado: APROBADO.** Las subcategorías de "Otros Blogs" (Tecnología,
+Educación, Cultura, Deporte — ver `docs/EDITORIAL-SYSTEM.md`) forman un
+**segundo lenguaje visual**, deliberadamente distinto del de Category Pages
+(sección 11). No reutilizan `CategoryBanner`: no hay imagen, no hay hero, no
+hay bloque de color grande. `src/pages/otros-blogs/tecnologia/index.astro`
+es la referencia canónica de este patrón.
+
+**Jerarquía del sistema:**
+
+- **Nivel 1 — Category Pages** (Política, Economía, Geopolítica, Otros
+  Blogs): banners gráficos a pantalla completa, color propio por sección.
+  Ver sección 11.
+- **Nivel 2 — Subcategory Pages** (Tecnología, Educación, Cultura, Deporte,
+  dentro de Otros Blogs): cabecera editorial tipográfica, minimalista,
+  sobre `--color-paper`, sin imagen. Se sienten como una capa más editorial
+  y de blog dentro de la misma identidad — nunca como una quinta Category
+  Page.
+
+**Composición de una Subcategory Page:**
+
+```
+<Header />
+<main>
+  <SubcategoryHeader parentLabel="Otros Blogs" title=... subtitle=... />
+  <LatestArticles items={...} />
+</main>
+<Footer />
+```
+
+- `<Header />` a secas — **sin** `transparentOverHero`: no hay banner detrás
+  del Header, así que el Header se comporta como en la página de artículo
+  (fondo negro sólido desde el inicio).
+- `SubcategoryHeader.astro` (nuevo componente, `src/components/`): cabecera
+  centrada — eyebrow uppercase con el nombre de la categoría madre (p. ej.
+  "OTROS BLOGS") en `--color-violet-600`, una línea fina decorativa en
+  `--color-violet-500` debajo, título grande en `--color-ink-950` (escala
+  propia `clamp(2.5rem, 1.7rem + 4vw, 4.75rem)` — **no** `--text-hero` ni la
+  escala del título de `CategoryBanner`, para no competir visualmente con
+  las Category Pages) y subtítulo en `--color-graphite-600`
+  (`--text-hero-support`). `padding-block: var(--space-7) var(--space-6)`
+  (desktop), `var(--space-6) var(--space-5)` (≤640px) — deliberadamente
+  cerca del Header (51px), no un hero a pantalla completa; sin breadcrumb
+  tradicional. Cierra con una línea divisoria ancha (100% del container) y
+  delicada (3px, apenas más gruesa que la rulita de 2px del eyebrow) en
+  `--color-violet-500`, que separa visualmente la cabecera del listado de
+  posts.
+- `LatestArticles`/`PostRow` se reutilizan sin cambios estructurales — mismo
+  listado tipográfico que Home y las Category Pages, incluido el empty state
+  ("Las próximas publicaciones aparecerán aquí."). Único agregado: prop
+  opcional `dividerColor` en `LatestArticles` (por defecto
+  `--color-gray-200`, sin cambiar Home ni Category Pages), que las
+  Subcategory Pages pasan como `var(--color-violet-500)` para que el
+  divisor entre posts lleve el acento violeta cuando hay más de uno.
+- Filtro de artículos: `getPublishedArticlesByCategory("otros-blogs",
+  "<subcategory>")` en `src/lib/articles.ts` — mismo helper que las Category
+  Pages, extendido con un segundo parámetro `subcategory` opcional (no
+  rompe las llamadas existentes que no lo pasan).
+
+**Violeta — uso deliberadamente escaso:** es el único acento cromático de
+este patrón (`--color-violet-500`/`--color-violet-600`, `tokens.css`),
+relaciona cada subcategoría con "Otros Blogs". Aparece en el eyebrow, la
+línea fina y el divisor entre posts (`LatestArticles` `dividerColor`) —
+nunca como fondo, título ni bloque grande. No introducir un color distinto
+por subcategoría: el violeta es compartido por todas las Subcategory Pages,
+a diferencia de las Category Pages donde cada sección tiene su propio color
+de banner.
+
+**Cualquier cambio futuro a este patrón** debe hacerse primero sobre
+`SubcategoryHeader.astro` y `/otros-blogs/tecnologia/`, con aprobación
+explícita — mismo criterio que la sección 11 para Category Pages.
+
+## 13. Proceso para páginas nuevas
 
 Antes de escribir código para cualquier página nueva (categorías, autor, "Sobre 8LEAKS", contacto, búsqueda, tags, archivos, etc.):
 

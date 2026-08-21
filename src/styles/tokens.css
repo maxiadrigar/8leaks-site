@@ -34,6 +34,16 @@
   --color-amber-500: #ff6a00;
   --color-amber-600: #c25100;
 
+  /* Violeta — acento exclusivo de las Subcategory Pages de "Otros Blogs"
+     (ver SubcategoryHeader.astro), relaciona tipográficamente cada
+     subcategoría (Tecnología, Educación, Cultura, Deporte) con el violeta
+     ya aprobado de banner-otros-blogs.png. Mismo patrón que el ámbar:
+     -500 vivo para detalles decorativos, -600 oscurecido para texto real
+     (contraste ~7.1:1 sobre --color-paper). Uso deliberadamente escaso —
+     eyebrow y una línea fina, nunca fondos ni bloques grandes. */
+  --color-violet-500: #7b5ce0;
+  --color-violet-600: #5a3fc4;
+
   /* Tipografía — Outfit (cargada en Layout.astro vía Google Fonts,
      licencia abierta) como fuente principal en todo el sitio, con
      Arial/Helvetica como respaldo seguro si la carga remota falla. El
