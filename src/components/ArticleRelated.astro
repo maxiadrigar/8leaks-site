@@ -1,0 +1,134 @@
+---
+// Artículos relacionados al cierre de la página de artículo — misma
+// distribución de dos columnas que .article-layout en [slug].astro
+// ("Relacionados" a la altura del perfil del autor, lista con el mismo
+// ancho que la columna de artículo). Estructura y metadata calcadas de
+// references/article-v2/relacionados.jpg: sin eyebrow de categoría, título
+// + una sola línea "Por Nombre el Fecha" (solo el nombre en negro
+// subrayado). Ya no reutiliza PostRow.astro (que queda intacto).
+import type { CollectionEntry } from "astro:content";
+import { formatArticleDateLong } from "../lib/content-format";
+
+interface Props {
+  items: {
+    article: CollectionEntry<"articulos">;
+    author: CollectionEntry<"autores"> | null;
+  }[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <section class="article-related" aria-labelledby="article-related-heading">
+      <div class="article-related__layout">
+        <p id="article-related-heading" class="article-related__label">
+          Relacionados
+        </p>
+        <div class="article-related__list">
+          {items.map(({ article, author }) => (
+            <article class="article-related__item">
+              <h3 class="article-related__title">
+                <a href={`/articulos/${article.id}/`}>{article.data.title}</a>
+              </h3>
+              <p class="article-related__meta">
+                {author ? (
+                  <>
+                    Por <span class="article-related__author-name">{author.data.name}</span> el{" "}
+                  </>
+                ) : (
+                  "Publicado el "
+                )}
+                <time datetime={article.data.publishedAt.toISOString()}>
+                  {formatArticleDateLong(article.data.publishedAt)}
+                </time>
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .article-related {
+    background: #f5f8fa;
+  }
+
+  .article-related__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+    padding-block: var(--space-8);
+  }
+
+  .article-related__label {
+    color: var(--color-black);
+    font-size: var(--text-section-heading);
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+    margin-bottom: var(--space-5);
+  }
+
+  .article-related__list {
+    min-width: 0;
+  }
+
+  .article-related__item + .article-related__item {
+    margin-top: var(--space-7);
+    padding-top: var(--space-7);
+    border-top: var(--border-hairline-light);
+  }
+
+  .article-related__title {
+    font-size: var(--text-post-title);
+    font-weight: 700;
+    line-height: var(--leading-solid);
+    letter-spacing: var(--tracking-display);
+    max-width: 44ch;
+  }
+
+  .article-related__title a {
+    color: var(--color-graphite-600);
+    text-decoration: none;
+  }
+
+  .article-related__title a:hover {
+    color: var(--color-ink-950);
+  }
+
+  .article-related__meta {
+    margin-top: var(--space-3);
+    color: var(--color-graphite-600);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: var(--leading-meta);
+  }
+
+  .article-related__author-name {
+    color: var(--color-black);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  @media (min-width: 1024px) {
+    .article-related__layout {
+      /* Mismas medidas que .article-layout en [slug].astro. */
+      grid-template-columns: 152px 1fr;
+      column-gap: 200px;
+    }
+
+    .article-related__label {
+      margin-bottom: 0;
+      padding-top: calc(var(--leading-meta) + var(--space-4));
+    }
+
+    .article-related__list {
+      max-width: var(--container-reading);
+    }
+  }
+</style>

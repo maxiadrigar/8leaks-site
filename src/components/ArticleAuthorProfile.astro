@@ -1,0 +1,204 @@
+---
+// Perfil editorial del autor — reemplaza funcionalmente a
+// ArticleBrandIdentity.astro (que se mantiene, sin uso, hasta validar este
+// componente con datos reales humanos e institucionales). Mismo componente
+// para autor humano y para 8LEAKS como autor institucional: nada se
+// hardcodea, todo sale de author.data (colección `autores`).
+//
+// Desktop (≥1024px): columna vertical dentro del grid del artículo (ver
+// .article-layout en [slug].astro), secundaria frente al artículo. Mobile/
+// tablet (<1024px): fila horizontal compacta dentro del flujo, nunca oculta.
+import type { CollectionEntry } from "astro:content";
+import { cloudinaryUrlAtWidth, cloudinarySrcSet, AVATAR_WIDTHS } from "../lib/cloudinary";
+
+interface Props {
+  author: CollectionEntry<"autores">;
+  coAuthors?: CollectionEntry<"autores">[];
+}
+
+const { author, coAuthors = [] } = Astro.props;
+const { name, headline, avatar, socialLinks, handle: plainHandle } = author.data;
+
+type SocialLink = CollectionEntry<"autores">["data"]["socialLinks"][number];
+
+// Prioridad de red social a mostrar como handle — solo si existe una URL
+// real cargada; nunca se inventa un @usuario a partir del nombre.
+const PLATFORM_PRIORITY = ["instagram", "twitter", "linkedin", "website"] as const;
+
+function deriveHandle(links: SocialLink[]): { href: string; label: string } | null {
+  for (const platform of PLATFORM_PRIORITY) {
+    const link = links.find((entry: SocialLink) => entry.platform === platform);
+    if (!link) continue;
+    try {
+      const parsed = new URL(link.url);
+      if (platform === "website") {
+        return { href: link.url, label: parsed.hostname.replace(/^www\./, "") };
+      }
+      const segment = parsed.pathname.split("/").filter(Boolean).pop();
+      if (segment) return { href: link.url, label: `@${segment}` };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+// Fallback sobrio cuando no hay avatar cargado — iniciales del nombre real,
+// nunca una foto/persona inventada.
+function getInitials(value: string): string {
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  const initials = words
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? "")
+    .join("");
+  return initials || "?";
+}
+
+function joinNames(names: string[]): string {
+  if (names.length === 0) return "";
+  if (names.length === 1) return names[0];
+  return `${names.slice(0, -1).join(", ")} y ${names[names.length - 1]}`;
+}
+
+// Un handle real derivado de socialLinks (con URL verificada) siempre tiene
+// prioridad sobre author.data.handle (texto plano, sin URL confirmada
+// todavía — ver content.config.ts). Si no hay ninguno de los dos, no se
+// muestra nada.
+const derivedHandle = deriveHandle(socialLinks);
+const handle = derivedHandle ?? (plainHandle ? { href: null, label: plainHandle } : null);
+const initials = getInitials(name);
+const coAuthorNames = coAuthors.map((coAuthor: CollectionEntry<"autores">) => coAuthor.data.name);
+---
+
+<aside class="article-author" aria-label="Autor del artículo">
+  {
+    avatar ? (
+      <img
+        src={cloudinaryUrlAtWidth(avatar.url, 96)}
+        srcset={cloudinarySrcSet(avatar.url, AVATAR_WIDTHS)}
+        sizes="96px"
+        alt={avatar.alt}
+        width="96"
+        height="96"
+        class="article-author__avatar"
+      />
+    ) : (
+      <span class="article-author__avatar article-author__avatar--fallback" aria-hidden="true">
+        {initials}
+      </span>
+    )
+  }
+
+  <div class="article-author__info">
+    <p class="article-author__name">{name}</p>
+    {
+      handle && (
+        handle.href ? (
+          <a href={handle.href} target="_blank" rel="noopener noreferrer" class="article-author__handle">
+            {handle.label}
+          </a>
+        ) : (
+          <span class="article-author__handle">{handle.label}</span>
+        )
+      )
+    }
+    {headline && <p class="article-author__headline">{headline}</p>}
+    {coAuthorNames.length > 0 && (
+      <p class="article-author__co">Con la colaboración de {joinNames(coAuthorNames)}</p>
+    )}
+  </div>
+</aside>
+
+<style>
+  .article-author {
+    --article-author-width: 152px;
+  }
+
+  .article-author__avatar {
+    display: block;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: var(--border-hairline-light);
+  }
+
+  .article-author__avatar--fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-gray-200);
+    color: var(--color-graphite-600);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .article-author__name {
+    margin-top: var(--space-4);
+    color: var(--color-black);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: var(--leading-solid);
+  }
+
+  .article-author__handle {
+    display: inline-block;
+    margin-top: var(--space-1);
+    color: var(--color-black);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    line-height: var(--leading-meta);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .article-author__headline {
+    margin-top: var(--space-3);
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    line-height: var(--leading-snug);
+  }
+
+  .article-author__co {
+    margin-top: var(--space-3);
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    line-height: var(--leading-snug);
+  }
+
+  @media (min-width: 1024px) {
+    .article-author {
+      width: var(--article-author-width);
+      padding-top: calc(var(--leading-meta) + var(--space-4));
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .article-author {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding-block: var(--space-5);
+      border-bottom: var(--border-hairline-light);
+    }
+
+    .article-author__avatar {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .article-author__avatar--fallback {
+      font-size: 1rem;
+    }
+
+    .article-author__info {
+      min-width: 0;
+    }
+
+    .article-author__name {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+  }
+</style>

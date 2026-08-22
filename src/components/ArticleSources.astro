@@ -2,6 +2,8 @@
 // Sección "Fuentes" — extremadamente limpia: sin cards, sin fondos
 // individuales, sin cajas. Solo se renderiza si el artículo tiene fuentes
 // cargadas (no se infiere ni se inventa nada).
+import { sourceTypeLabel, formatArticleDateLong } from "../lib/content-format";
+
 interface Source {
   label: string;
   url?: string;
@@ -40,6 +42,10 @@ const { sources } = Astro.props;
                 <span class="article-sources__link">{source.label}</span>
               )}
               {source.publisher && <span class="article-sources__publisher"> — {source.publisher}</span>}
+              <p class="article-sources__detail">
+                {sourceTypeLabel(source.type)}
+                {source.accessedAt && ` · Consultado el ${formatArticleDateLong(source.accessedAt)}`}
+              </p>
             </li>
           ))}
         </ul>
@@ -51,19 +57,6 @@ const { sources } = Astro.props;
 <style>
   .article-sources {
     padding-block: var(--space-8);
-  }
-
-  .article-sources__inner {
-    width: min(var(--container-reading), 100%);
-    margin-inline: auto;
-    padding-inline: var(--container-padding);
-  }
-
-  @media (min-width: 1024px) {
-    .article-sources__inner {
-      margin-left: calc(50% - (var(--container-reading) / 2) + var(--reading-offset));
-      margin-right: 0;
-    }
   }
 
   .article-sources__heading {
@@ -96,6 +89,11 @@ const { sources } = Astro.props;
     color: var(--color-ink-900);
     text-decoration: underline;
     text-underline-offset: 2px;
+  }
+
+  .article-sources__detail {
+    margin-top: var(--space-1);
+    color: var(--color-graphite-600);
   }
 
   .article-sources__publisher {

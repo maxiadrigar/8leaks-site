@@ -20,6 +20,15 @@ canonical reference — it is the approved master template for category
 pages, reused structurally (Header, CategoryBanner, LatestArticles/PostRow,
 Footer), not reinterpreted per page.
 
+**Before modifying or creating any behavior related to individual article
+pages** (`src/pages/articulos/[slug].astro`), read
+`docs/DESIGN-SYSTEM.md` → **section 14, "Article Pages — Master Template
+V2"** first. The current implementation is the approved, definitive visual
+reference for every article regardless of category/subcategory/editorial
+type/author — there are no per-category article templates, and none
+should be created. Any future visual change to article pages must be made
+on this master template and propagate generically to all articles.
+
 ## 8LEAKS — Editorial System
 
 The conceptual and content-architecture source of truth (official definition

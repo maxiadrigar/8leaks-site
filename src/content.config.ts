@@ -76,13 +76,24 @@ const articleSchema = z.object({
 
 const authorSchema = z.object({
   name: z.string().min(2),
+  headline: z.string().max(100).optional(),
   bio: z.string().max(500).optional(),
   avatar: z
     .object({
-      url: z.string().url(),
+      // Acepta URL absoluta (Cloudinary, como coverImage) o ruta local que
+      // empiece con "/" (assets de public/brand/, ej. logos institucionales)
+      // — z.string().url() por sí solo rechaza rutas relativas.
+      url: z.string().refine(
+        (value) => /^https?:\/\//.test(value) || value.startsWith("/"),
+        { message: "Debe ser una URL absoluta (http/https) o una ruta que empiece con /" },
+      ),
       alt: z.string(),
     })
     .optional(),
+  // Handle visible sin URL confirmada (ej. "@8leaks") — deliberadamente
+  // separado de socialLinks, que exige URL real. Nunca se infiere a partir
+  // del nombre; se muestra como texto, no como link, mientras no haya URL.
+  handle: z.string().optional(),
   socialLinks: z
     .array(
       z.object({

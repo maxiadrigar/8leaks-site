@@ -18,7 +18,7 @@ const srcset = cloudinarySrcSet(coverImage.url, COVER_IMAGE_WIDTHS);
   <img
     src={src}
     srcset={srcset}
-    sizes="(min-width: 768px) 720px, 100vw"
+    sizes="(min-width: 768px) 680px, 100vw"
     alt={coverImage.alt}
     loading="eager"
     class="article-cover__image"
@@ -28,17 +28,7 @@ const srcset = cloudinarySrcSet(coverImage.url, COVER_IMAGE_WIDTHS);
 
 <style>
   .article-cover {
-    width: min(var(--container-reading), 100%);
     margin-block: var(--space-7) var(--space-8);
-    margin-inline: auto;
-    padding-inline: var(--container-padding);
-  }
-
-  @media (min-width: 1024px) {
-    .article-cover {
-      margin-left: calc(50% - (var(--container-reading) / 2) + var(--reading-offset));
-      margin-right: 0;
-    }
   }
 
   .article-cover__image {

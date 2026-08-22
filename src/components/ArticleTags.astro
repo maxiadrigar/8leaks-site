@@ -1,0 +1,41 @@
+---
+// Tags al final del artículo — texto plano, sin pills, sin links (todavía
+// no existen páginas de tags, así que no se generan hrefs que den 404).
+interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <div class="article-tags">
+      <span class="article-tags__label">Tags</span>
+      <p class="article-tags__list">{tags.join(" · ")}</p>
+    </div>
+  )
+}
+
+<style>
+  .article-tags {
+    padding-block: var(--space-6);
+    border-top: var(--border-hairline-light);
+  }
+
+  .article-tags__label {
+    display: block;
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    font-weight: 700;
+    letter-spacing: var(--tracking-body);
+    line-height: var(--leading-meta);
+    margin-bottom: var(--space-2);
+  }
+
+  .article-tags__list {
+    color: var(--color-gray-700);
+    font-size: var(--text-meta);
+    line-height: var(--leading-meta);
+  }
+</style>

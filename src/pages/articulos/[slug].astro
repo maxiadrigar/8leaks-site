@@ -3,11 +3,15 @@ import { getCollection, getEntry, render, type CollectionEntry } from "astro:con
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import ArticleAuthorProfile from "../../components/ArticleAuthorProfile.astro";
 import ArticleHeader from "../../components/ArticleHeader.astro";
-import ArticleBrandIdentity from "../../components/ArticleBrandIdentity.astro";
 import ArticleCover from "../../components/ArticleCover.astro";
 import ArticleBody from "../../components/ArticleBody.astro";
 import ArticleSources from "../../components/ArticleSources.astro";
+import ArticleTags from "../../components/ArticleTags.astro";
+import ArticleShare from "../../components/ArticleShare.astro";
+import ArticleRelated from "../../components/ArticleRelated.astro";
+import { getRelatedArticles } from "../../lib/articles";
 
 export async function getStaticPaths() {
   const articles = await getCollection("articulos", ({ data }) => !data.draft);
@@ -23,28 +27,76 @@ interface Props {
 
 const { article } = Astro.props;
 const { Content } = await render(article);
-const author = await getEntry(article.data.author[0]);
+
+// Multi-autor: se resuelven TODOS los autores del array (antes solo se
+// resolvía author[0]). El primero es el perfil principal; el resto se
+// muestra como línea editorial de colaboración en ArticleAuthorProfile.
+const authors = (
+  await Promise.all(article.data.author.map((ref) => getEntry(ref)))
+).filter((entry): entry is CollectionEntry<"autores"> => entry !== undefined);
+const [primaryAuthor, ...coAuthors] = authors;
+
+const related = await getRelatedArticles(article, 3);
 
 const pageTitle = article.data.seo?.title ?? `${article.data.title} — 8LEAKS`;
 const pageDescription = article.data.seo?.description ?? article.data.excerpt;
+const shareUrl = Astro.url.href;
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
   <Header />
-  <main class="article">
-    <ArticleBrandIdentity />
-    <ArticleHeader article={article} author={author ?? null} />
-    <ArticleCover coverImage={article.data.coverImage} />
-    <ArticleBody>
-      <Content />
-    </ArticleBody>
-    <ArticleSources sources={article.data.sources} />
+  <main class="article-layout">
+    {primaryAuthor && <ArticleAuthorProfile author={primaryAuthor} coAuthors={coAuthors} />}
+    <div class="article-column">
+      <ArticleHeader article={article} authors={authors} />
+      <ArticleCover coverImage={article.data.coverImage} />
+      <ArticleBody>
+        <Content />
+      </ArticleBody>
+      <ArticleSources sources={article.data.sources} />
+      <ArticleTags tags={article.data.tags} />
+      <ArticleShare title={article.data.title} url={shareUrl} />
+    </div>
   </main>
+  <ArticleRelated items={related} />
   <Footer />
 </Layout>
 
 <style>
-  .article {
-    position: relative;
+  .article-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+    /* Aire entre el Header global y el contenido (perfil + artículo) —
+       antes arrancaba pegado al Header, sin padding propio. */
+    padding-top: var(--space-8);
+  }
+
+  .article-column {
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .article-layout {
+      /* 152px reutiliza el ancho ya establecido para la firma lateral en
+         ArticleBrandIdentity.astro. Columna de artículo en 1fr (no un ancho
+         fijo): se achica con gracia si el viewport es angosto (evita overflow
+         cerca del breakpoint de 1024px) y de todos modos nunca supera
+         --container-reading gracias al max-width de .article-column.
+         200px de gap — medido contra el CSS real de blog.x.com (grid de 12
+         columnas donde el author-card ocupa ~32% y el cuerpo ~49%, con la
+         columna del autor separada del cuerpo por su propio ancho generoso
+         más que por un gap explícito): con nuestro autor mucho más angosto
+         (152px, contenido mínimo) replicamos ese mismo "aire" total
+         reforzando el gap en vez de ensanchar una columna que quedaría vacía. */
+      grid-template-columns: 152px 1fr;
+      column-gap: 200px;
+    }
+
+    .article-column {
+      max-width: var(--container-reading);
+    }
   }
 </style>

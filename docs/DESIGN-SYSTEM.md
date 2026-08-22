@@ -7,7 +7,7 @@
 Dos páginas son la fuente de verdad visual del proyecto. Ante cualquier duda de diseño, se revisan ellas y sus componentes, no se reinterpreta el lenguaje desde cero:
 
 - **Home** — `src/pages/index.astro` (+ `Hero.astro`, `LatestArticles.astro`, `PostRow.astro`): identidad institucional y de portada.
-- **Artículo individual** — `src/pages/articulos/[slug].astro` (+ `ArticleHeader.astro`, `ArticleBrandIdentity.astro`, `ArticleCover.astro`, `ArticleBody.astro`, `ArticleSources.astro`): identidad editorial y de lectura.
+- **Artículo individual** — `src/pages/articulos/[slug].astro` (+ `ArticleAuthorProfile.astro`, `ArticleHeader.astro`, `ArticleCover.astro`, `ArticleBody.astro`, `ArticleSources.astro`, `ArticleTags.astro`, `ArticleShare.astro`, `ArticleRelated.astro`): identidad editorial y de lectura — **Master Template V2**, ver sección 14 para el detalle completo.
 
 `Header.astro` y `Footer.astro` son globales y los reutilizan ambas. `src/styles/tokens.css` y `src/styles/global.css` son la base compartida.
 
@@ -58,7 +58,7 @@ Paleta esencialmente monocromática. El gris es parte de la identidad, no un col
 Uno de los principios más importantes. El espacio vacío es parte del diseño, no un vacío a rellenar.
 
 - No centrar todo por default solo porque haya espacio disponible.
-- Las composiciones asimétricas son parte del lenguaje: la página de artículo desplaza la columna de lectura hacia la derecha (`--container-reading`, `--reading-offset`) y usa el margen izquierdo para la firma institucional (`ArticleBrandIdentity.astro`), en vez de centrar todo por defecto.
+- Las composiciones asimétricas son parte del lenguaje: la página de artículo usa un grid real de dos columnas en desktop (152px de perfil de autor + 200px de gap + columna de lectura de `--container-reading`, ver sección 14) en vez de centrar todo por defecto — el perfil (`ArticleAuthorProfile.astro`) ocupa el margen izquierdo.
 - No rellenar huecos automáticamente con contenido, líneas o cajas.
 
 ## 5. Marca — `public/brand/`
@@ -68,7 +68,8 @@ Assets oficiales, no recrear ni generar variantes nuevas sin autorización:
 - `8leaks-logo-horizontal.png` — Header (nav global), Footer (si aplica).
 - `8leaks-symbol.png` (isotipo 8L) — elemento gráfico de gran escala (Hero de Home: centrado, gigante, con el titular superpuesto encima).
 - `8leaks-logo-vertical.png` — Footer, cuando la composición lo justifique.
-- `logo-redondo.png` — firma editorial circular (`ArticleBrandIdentity.astro` en la página de artículo).
+- `logo-redondo.png` — sin uso activo actualmente (era el avatar de `ArticleBrandIdentity.astro`, componente retirado de la página de artículo — ver sección 14).
+- `8leaks-logo-vertical.png` — además de Footer, es el avatar del autor institucional 8LEAKS en `ArticleAuthorProfile.astro` (cargado como dato en `src/content/autores/8leaks.md`, no hardcodeado en el componente).
 
 El logo no tiene un tamaño fijo único: puede ser discreto en navegación o dominante como elemento gráfico institucional (como el isotipo del Hero). La escala responde a la composición de cada contexto, no a una regla universal.
 
@@ -78,9 +79,11 @@ Header negro minimalista → Hero negro de gran escala (isotipo 8L centrado y gi
 
 ## 7. Artículo individual — patrón de lectura
 
-Header global → **sin hero adicional**, fondo blanco directo → columna editorial controlada (`--container-reading: 720px`) desplazada hacia la derecha → firma institucional lateral (logo circular + "8LEAKS" + "@8leaks") alineada con el tope del titular, solo en desktop (≥1024px) → categoría pequeña, título grande y pesado en negro, bajada gris, metadata discreta → portada opcional (se retira sola si falla, sin placeholder) → cuerpo en gris azulado (`--color-graphite-600`) con h2/h3/listas/blockquotes/enlaces editoriales, sin cards → sección "Fuentes" limpia → Footer global.
+**Estado: APROBADO.** La implementación actual es la **Article Pages — Master Template V2**, documentada en detalle en la sección 14 (composición completa, componentes exactos y todos los valores reales de layout/tipografía/spacing).
 
-La firma lateral es una **firma institucional**, no un sidebar tradicional — no lleva bordes, fondos ni cards, y no es sticky (se va con el scroll junto al resto del encabezado).
+Resumen: Header global → grid de dos columnas en desktop (perfil de autor a la izquierda, columna de lectura a la derecha; una sola columna en mobile/tablet) → eyebrow de clasificación editorial → H1 → metadata de autoría y fecha (sin bajada visible, sin tiempo de lectura) → portada opcional (se retira sola si falla, sin placeholder) → cuerpo editorial con jerarquía H2/H3/H4, sin cards → Fuentes → Tags → Compartir → Relacionados → Footer global.
+
+El perfil de autor es una **firma editorial**, no un sidebar tradicional — no lleva bordes, fondos ni cards, y no es sticky (se va con el scroll junto al resto del encabezado).
 
 ## 8. Header y Footer
 
@@ -92,7 +95,7 @@ Mantener la identidad **no** significa clonar el layout de Home o de artículo e
 
 ## 10. Responsive
 
-Desktop puede usar composiciones editoriales ambiciosas y mucho espacio negativo (p. ej. la firma lateral del artículo, visible solo ≥1024px). Tablet preserva la jerarquía. Mobile prioriza lectura, claridad, navegación y jerarquía por sobre preservar layouts de múltiples columnas — se simplifica sin forzar el desktop a pantallas chicas (ver cómo `ArticleBrandIdentity` se oculta por completo en mobile en vez de forzar una versión horizontal).
+Desktop puede usar composiciones editoriales ambiciosas y mucho espacio negativo (p. ej. la firma lateral del artículo, visible solo ≥1024px). Tablet preserva la jerarquía. Mobile prioriza lectura, claridad, navegación y jerarquía por sobre preservar layouts de múltiples columnas — se simplifica sin forzar el desktop a pantallas chicas (ver cómo `ArticleAuthorProfile` pasa a una fila horizontal compacta en mobile/tablet en vez de ocultarse — sección 14).
 
 ## 11. Category Pages — `/politica/` es la plantilla maestra
 
@@ -279,3 +282,221 @@ Antes de escribir código para cualquier página nueva (categorías, autor, "Sob
 4. Presentar auditoría + plan (componentes a reutilizar, qué se crea, archivos a tocar, decisiones nuevas) y **esperar aprobación** antes de implementar cualquier página nueva o cambio visual importante.
 
 No se rediseña Home ni el artículo individual salvo pedido explícito.
+
+## 14. Article Pages — Master Template V2
+
+**Estado: APROBADO DEFINITIVAMENTE (nivel visual).** La implementación
+actual de `src/pages/articulos/[slug].astro` es la **plantilla maestra
+única** de toda página individual de artículo de 8LEAKS — Política,
+Economía, Geopolítica y Otros Blogs (con o sin subcategoría), para
+cualquier `editorialType`, autor, longitud, cantidad de fuentes o tags.
+No existen ni deben crearse plantillas visuales por categoría
+(`ArticlePolitics`, `TechnologyArticle`, etc.). Los datos editoriales
+determinan el **contenido**; la arquitectura visual es siempre la misma.
+Confirmado por auditoría: `category`/`subcategory`/`editorialType` solo se
+leen como texto (para componer el eyebrow, ver más abajo) — no existe
+ninguna rama condicional de layout basada en esos campos, ni en
+`[slug].astro` ni en ningún componente `Article*`.
+
+Cualquier cambio visual futuro que afecte a Article Pages debe hacerse
+sobre esta plantilla maestra y propagarse de forma genérica a todos los
+artículos — nunca una modificación visual específica de un artículo
+individual, salvo que exista una funcionalidad editorial explícita que lo
+justifique y haya sido aprobada primero.
+
+### Componentes
+
+`src/pages/articulos/[slug].astro` compone, en este orden:
+`Header` → `ArticleAuthorProfile` → (columna de artículo:
+`ArticleHeader` → `ArticleCover` → `ArticleBody` → `ArticleSources` →
+`ArticleTags` → `ArticleShare`) → `ArticleRelated` → `Footer`.
+
+`ArticleBrandIdentity.astro` (la firma institucional hardcodeada de la
+V1) **sigue existiendo en el repo pero ya no se usa** — fue reemplazada
+funcionalmente por `ArticleAuthorProfile.astro`, que resuelve autor
+humano e institucional desde datos, sin hardcodear ninguna interfaz
+especial. Se mantiene sin borrar a la espera de limpieza futura.
+
+### Composición general (desktop, ≥1024px)
+
+```
+Header (global, negro, sticky)
+↓ padding-top: var(--space-8) — aire entre Header y contenido
+┌───────────────────┬──────────────────────────────────────┐
+│ ArticleAuthorProfile │ eyebrow                              │
+│ (152px)              │ H1                                    │
+│                       │ Por Nombre / Fecha / Actualizado...  │
+│                       │ portada (opcional)                   │
+│                       │ cuerpo (H2/H3/H4, párrafos, listas,  │
+│                       │ blockquote, links)                   │
+│                       │ Fuentes                              │
+│                       │ Tags                                 │
+│                       │ Compartir                            │
+└───────────────────┴──────────────────────────────────────┘
+        (152px)   (200px gap)      (hasta --container-reading)
+↓
+ArticleRelated (fondo #F5F8FA, ancho completo, mismo grid de 2 columnas)
+↓
+Footer (global)
+```
+
+Grid real en `.article-layout` (`[slug].astro`):
+`grid-template-columns: 152px 1fr; column-gap: 200px;` dentro de un
+contenedor `max-width: var(--container-max)` (1200px) +
+`padding-inline: var(--container-padding)`. La columna de artículo
+(`.article-column`) no tiene ancho fijo — es `1fr` con
+`max-width: var(--container-reading)` (**680px**), así se achica con
+gracia cerca del breakpoint de 1024px en vez de generar overflow.
+
+### Responsive — tablet/mobile (<1024px)
+
+`.article-layout` colapsa a `grid-template-columns: 1fr` (una sola
+columna). `ArticleAuthorProfile` **no se oculta**: pasa a fila horizontal
+compacta (`display: flex`, avatar 48px en vez de 96px, `border-bottom`
+como divisor) apilada antes del `ArticleHeader`, en vez de sidebar
+vertical. Mismo comportamiento en tablet y mobile — sin breakpoint
+intermedio adicional.
+
+### `ArticleAuthorProfile.astro`
+
+Alimentado 100% desde la colección `autores` (`author.data`), sin datos
+hardcodeados — funciona igual para 8LEAKS (autor institucional) que para
+cualquier autor humano presente o futuro.
+
+- **Avatar**: si `author.data.avatar` existe, `<img>` circular 96px
+  (48px en mobile/tablet), `object-fit: cover`,
+  `border: var(--border-hairline-light)`, servido vía los helpers de
+  Cloudinary (`cloudinaryUrlAtWidth`/`cloudinarySrcSet`,
+  `AVATAR_WIDTHS = [48, 96, 192]`) — también acepta una ruta local
+  (`avatar.url` admite URL absoluta `http(s)` o una ruta que empiece con
+  `/`, no solo Cloudinary). Si no hay avatar: fallback sobrio de
+  iniciales del nombre real (máx. 2 letras) sobre `--color-gray-200`,
+  nunca una foto/persona inventada.
+- **Nombre**: `--color-black`, `1.125rem` (18px, 16px en mobile) bold,
+  `line-height: var(--leading-solid)`.
+- **Handle**: prioridad `instagram > twitter > linkedin > website` sobre
+  `author.data.socialLinks` — solo se muestra si hay una URL real
+  cargada, y se renderiza como `<a target="_blank">` (nunca se infiere un
+  `@usuario` a partir del nombre). Si no hay `socialLinks` pero existe
+  `author.data.handle` (string plano, sin URL confirmada — campo
+  separado en el schema), se muestra el mismo estilo visual como
+  `<span>` sin navegación. Estilo en ambos casos: `--color-black`,
+  `var(--text-meta)` (14px), subrayado, `text-underline-offset: 2px`.
+- **Headline**: `author.data.headline` (opcional), `--color-graphite-600`,
+  `var(--text-meta)`, `line-height: var(--leading-snug)` (1.35).
+- **Multi-autor**: coautores (todo el array `author[]` salvo el primero)
+  se listan como "Con la colaboración de X y Y" debajo del headline —
+  mismo estilo que el headline, sin avatares adicionales ni cards.
+
+### `ArticleHeader.astro`
+
+- **Eyebrow**: `articleEyebrow({category, subcategory, editorialType})`
+  (`src/lib/content-format.ts`) — compone `categoryLabel` + (si existe)
+  `subcategoryLabel` + `editorialTypeLabel`, unidos por `" · "`. Ejemplos
+  reales: `"Política · Noticia"`, `"Otros Blogs · Tecnología · Análisis"`.
+  Función aditiva y genérica — no distingue visualmente por categoría.
+  `--color-graphite-600`, `var(--text-meta)` (14px) bold.
+- **H1**: `--color-black`, `var(--text-article-title)` (clamp ~28–44px),
+  bold, `line-height: var(--leading-solid)`,
+  `letter-spacing: var(--tracking-display)`.
+- **Bajada/dek**: **deliberadamente no se muestra** debajo del H1. El dato
+  (`article.data.dek`/`excerpt`) sigue existiendo en el schema para SEO u
+  otros usos editoriales futuros — no se eliminó del modelo, solo de esta
+  vista.
+- **Metadata** (`margin-top: var(--space-4)` bajo el H1):
+  - `Por [Nombre]` — "Por" en `--color-graphite-600`; el nombre en
+    `--color-black` + subrayado (`text-underline-offset: 2px`), como
+    `<span>` sin `href` (no existe todavía `src/pages/autores/`, así que
+    no se genera navegación falsa — queda listo para volverse `<a>` real).
+    Ambos a `0.8125rem` (13px, más chico que `--text-meta` y que el
+    cuerpo del artículo), peso 400.
+  - Fecha de publicación en línea propia (`margin-top: var(--space-1)`),
+    `<time datetime>` con `formatArticleDateLong()` (español largo,
+    `Intl.DateTimeFormat("es-AR", {weekday:"long", day, month:"long",
+    year})`, primera letra capitalizada — ej. "Miércoles, 12 de agosto de
+    2026"), `--color-graphite-600`, mismo `0.8125rem`.
+  - `Actualizado el [fecha larga]` — **solo si `updatedAt` existe y
+    difiere de `publishedAt`**; si no, no se renderiza nada (sin hueco
+    reservado). `0.9375rem` (15px, 2px más grande que las otras dos
+    líneas), `--color-black`, peso `500`, `font-style: italic`.
+  - **Tiempo de lectura: deliberadamente no se muestra.** `[slug].astro`
+    sigue calculándolo (`calculateReadingTime()`,
+    `src/lib/reading-time.ts`) y pasándolo como prop `readingTime` a
+    `ArticleHeader`, pero el componente ya no lo consume ni renderiza —
+    ver sección 16 del último reporte de esta tarea sobre este remanente.
+
+### `ArticleBody.astro` — jerarquía del cuerpo
+
+Base: `--color-graphite-600`, `var(--text-article-body)` (16px),
+`line-height: 1.5` (valor explícito, no un token `--leading-*`
+existente). Párrafos con `margin-block: var(--space-5)` (24px).
+
+| Nivel | Color | Tamaño | Peso |
+|---|---|---|---|
+| H2 | `--color-black` | `1.25rem` (20px) | 700 |
+| H3 | `#657786` (valor exacto pedido, no token) | `1.125rem` (18px) | 700 |
+| H4 | `#657786` | `1rem` (16px) | 700 |
+
+La jerarquía entre H2/H3/H4 se distingue por tamaño/peso/spacing — el
+color de H2 es una excepción deliberada y aprobada (negro), distinta de
+H3/H4 (gris `#657786`); ninguno de los tres usa color de categoría.
+`strong` usa `--color-ink-900`. Listas (`ul`/`ol`) con `padding-left:
+1.25em`, `li` con `margin-block: var(--space-2)`. Links `--color-ink-900`
+subrayados (`hover: opacity 0.7`). `blockquote` con borde izquierdo de 2px
+`--color-gray-200`, `--color-graphite-600`, itálica. Imágenes internas a
+ancho completo con `border-radius: var(--radius-subtle)`.
+
+### `ArticleSources.astro`
+
+Se renderiza solo si `sources.length > 0`. Heading "Fuentes"
+(`--color-ink-900`, `var(--text-section-heading)`, 28px). Cada fuente:
+label (link si tiene `url`, texto si no) + `— publisher` si existe, más
+una segunda línea con `sourceTypeLabel(source.type)` (mapa de labels
+legibles) y, si existe `accessedAt`, `" · Consultado el [fecha larga]"`.
+Divisor hairline entre items, sin cards ni cajas.
+
+### `ArticleTags.astro`
+
+Se renderiza solo si `tags.length > 0`. Texto plano unido por `" · "`
+(sin links — no existen páginas de tags todavía, así que no se generan
+hrefs rotos), sin pills.
+
+### `ArticleShare.astro`
+
+X, WhatsApp, LinkedIn (enlaces construidos en build a partir de
+`Astro.url.href` + título) y "Copiar enlace" (`navigator.clipboard`, con
+mínimo JS inline). Sin SDKs, sin barra flotante, mismo estilo de link
+subrayado que el resto del artículo.
+
+### `ArticleRelated.astro`
+
+Usa `getRelatedArticles(article, 3)` (`src/lib/articles.ts`, función
+nueva y aditiva — no modifica `getPublishedArticlesByCategory`).
+Prioridad estrictamente lexicográfica: misma `subcategory` > misma
+`category` > cantidad de tags compartidos > `publishedAt` descendente;
+excluye el artículo actual y cualquier draft; máximo 3. Se renderiza solo
+si hay resultados (0 relacionados es un resultado válido, no se fuerza
+contenido).
+
+Ya no reutiliza `PostRow.astro` (que queda intacto, sin modificar) —
+tiene su propia estructura calcada de
+`references/article-v2/relacionados.jpg`: sección de ancho completo con
+fondo **`#F5F8FA`**, mismo grid de dos columnas que `.article-layout`
+(label "Relacionados" a la izquierda, alineado a la misma altura que
+`ArticleAuthorProfile`; lista a la derecha con el mismo
+`max-width: var(--container-reading)` que la columna de artículo). Cada
+item: título (link real a `/articulos/[slug]/`, `--color-graphite-600`,
+`var(--text-post-title)`, sin eyebrow de categoría) + una sola línea de
+metadata `"Por [Nombre] el [Fecha]"` (solo el nombre en
+`--color-black` + subrayado; el resto en `--color-graphite-600`).
+
+### Principio de plantilla única
+
+Un mismo artículo puede tener cualquier combinación real de
+`category`/`subcategory`/`editorialType` — `Política · Noticia`,
+`Economía · Investigación`, `Otros Blogs · Deporte · Análisis`, etc. — y
+siempre atraviesa exactamente los mismos componentes, en el mismo orden,
+con los mismos estilos. La única variación visual entre artículos es la
+que producen los propios datos (longitud del título, presencia de
+`updatedAt`, cantidad de fuentes/tags, si hay coautores, si el autor
+tiene avatar/handle/headline cargados).

@@ -130,7 +130,9 @@ collections:
     identifier_field: name
     fields:
       - { label: Nombre, name: name, widget: string, pattern: ['.{2,}', "Mínimo 2 caracteres"] }
+      - { label: Descriptor profesional (headline), name: headline, widget: string, required: false, pattern: ['.{0,100}', "Máximo 100 caracteres"] }
       - { label: Bio, name: bio, widget: text, required: false, pattern: ['.{0,500}', "Máximo 500 caracteres"] }
+      - { label: "Handle visible (ej. @8leaks, sin URL confirmada todavía)", name: handle, widget: string, required: false }
       - label: Avatar
         name: avatar
         widget: object

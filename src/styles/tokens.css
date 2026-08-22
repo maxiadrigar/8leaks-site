@@ -91,13 +91,12 @@
   /* Layout */
   --container-max: 1200px;
   --container-padding: clamp(1.25rem, 4vw, 3rem);
-  --container-reading: 720px; /* columna editorial de la página de artículo */
+  --container-reading: 680px; /* columna editorial de la página de artículo — aproxima la proporción real del cuerpo de blog.x.com (~49% de su grid de 12 columnas) */
   --reading-offset: var(--space-9); /* desplaza la columna hacia la derecha en pantallas anchas */
 
   /* Página de artículo individual — aditivos, la Home no los usa. */
   --text-article-title: clamp(1.75rem, 1.4rem + 2.2vw, 2.75rem); /* ~28-44px */
-  --text-article-body: 0.9375rem; /* 15px */
-  --leading-relaxed: 1.55;
+  --text-article-body: 1rem; /* 16px — Article V2, mejora de legibilidad sobre los 15px iniciales */
 
   /* Bordes */
   --radius-subtle: 1px;

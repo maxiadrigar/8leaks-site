@@ -1,0 +1,99 @@
+---
+// Compartir — función secundaria, sin barra flotante, sin SDKs ni widgets
+// externos. X/WhatsApp/LinkedIn son enlaces construidos en build; "Copiar
+// enlace" usa navigator.clipboard con el mínimo JS necesario.
+interface Props {
+  title: string;
+  url: string;
+}
+
+const { title, url } = Astro.props;
+const encodedUrl = encodeURIComponent(url);
+const encodedTitle = encodeURIComponent(title);
+
+const links = [
+  { label: "X", href: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}` },
+  { label: "WhatsApp", href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}` },
+  { label: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offset/?url=${encodedUrl}` },
+];
+---
+
+<div class="article-share">
+  <span class="article-share__label">Compartir</span>
+  <ul class="article-share__list">
+    {
+      links.map((link) => (
+        <li>
+          <a href={link.href} target="_blank" rel="noopener noreferrer" class="article-share__link">
+            {link.label}
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <button type="button" class="article-share__link article-share__copy" data-copy-url={url}>
+        Copiar enlace
+      </button>
+    </li>
+  </ul>
+</div>
+
+<style>
+  .article-share {
+    padding-block: var(--space-6);
+    border-top: var(--border-hairline-light);
+  }
+
+  .article-share__label {
+    display: block;
+    color: var(--color-graphite-600);
+    font-size: var(--text-meta);
+    font-weight: 700;
+    letter-spacing: var(--tracking-body);
+    line-height: var(--leading-meta);
+    margin-bottom: var(--space-3);
+  }
+
+  .article-share__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .article-share__link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    color: var(--color-ink-900);
+    font-size: var(--text-meta);
+    line-height: var(--leading-meta);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+
+  .article-share__link:hover {
+    opacity: 0.7;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>(".article-share__copy").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const url = button.dataset.copyUrl;
+      if (!url) return;
+      try {
+        await navigator.clipboard.writeText(url);
+        const original = button.textContent;
+        button.textContent = "¡Enlace copiado!";
+        window.setTimeout(() => {
+          button.textContent = original;
+        }, 2000);
+      } catch {
+        // Clipboard no disponible (permisos/HTTP no seguro) — el link
+        // sigue siendo visible y copiable manualmente por el usuario.
+      }
+    });
+  });
+</script>
