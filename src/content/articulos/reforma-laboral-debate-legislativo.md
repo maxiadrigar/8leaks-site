@@ -1,9 +1,10 @@
 ---
-title: "La reforma laboral entra en su etapa decisiva en el Congreso"
-excerpt: "Con dictamen de comisión ya emitido, el oficialismo busca los votos que le faltaron en el intento anterior."
+title: La reforma laboral entra en su etapa decisiva en el Congreso
+excerpt: Con dictamen de comisión ya emitido, el oficialismo busca los votos que
+  le faltaron en el intento anterior.
 coverImage:
-  url: "https://res.cloudinary.com/8leaks/image/upload/f_auto,q_auto/8leaks/articulos/reforma-laboral-debate-legislativo/portada.jpg"
-  alt: "Recinto de la Cámara de Diputados de la Nación durante una sesión"
+  url: https://res.cloudinary.com/dbkkfda3c/image/upload/v1786943860/mova-logo.png
+  alt: Recinto de la Cámara de Diputados de la Nación durante una sesión.
 author:
   - maria-fernandez
 category: politica
@@ -12,11 +13,12 @@ tags:
   - reforma-laboral
   - congreso
 sources:
-  - label: "Versión taquigráfica, sesión del 11 de agosto — Cámara de Diputados"
-    url: "https://www.hcdn.gob.ar/"
+  - label: Versión taquigráfica, sesión del 11 de agosto — Cámara de Diputados
+    url: https://www.hcdn.gob.ar/
     type: oficial
-    publisher: "HCDN"
+    publisher: HCDN
 publishedAt: 2026-08-12T08:30:00-03:00
+updatedAt: 2026-09-13T21:50:00.000-03:00
 access: free
 draft: false
 ---
