@@ -12,6 +12,8 @@ import ArticleTags from "../../components/ArticleTags.astro";
 import ArticleShare from "../../components/ArticleShare.astro";
 import ArticleRelated from "../../components/ArticleRelated.astro";
 import { getRelatedArticles } from "../../lib/articles";
+import { resolveCanonicalUrl, buildArticleOpenGraph } from "../../lib/seo";
+import { cloudinarySocialImageUrl } from "../../lib/cloudinary";
 
 export async function getStaticPaths() {
   const articles = await getCollection("articulos", ({ data }) => !data.draft);
@@ -41,9 +43,29 @@ const related = await getRelatedArticles(article, 3);
 const pageTitle = article.data.seo?.title ?? `${article.data.title} — 8LEAKS`;
 const pageDescription = article.data.seo?.description ?? article.data.excerpt;
 const shareUrl = Astro.url.href;
+
+const canonicalUrl = resolveCanonicalUrl(Astro.site, Astro.url.pathname);
+const ogImage = {
+  url: cloudinarySocialImageUrl(article.data.coverImage.url),
+  alt: article.data.coverImage.alt,
+};
+const articleOpenGraph = buildArticleOpenGraph({
+  category: article.data.category,
+  subcategory: article.data.subcategory,
+  tags: article.data.tags,
+  publishedAt: article.data.publishedAt,
+  updatedAt: article.data.updatedAt,
+});
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  ogType="article"
+  ogImage={ogImage}
+  article={articleOpenGraph}
+>
   <Header />
   <main class="article-layout">
     {primaryAuthor && <ArticleAuthorProfile author={primaryAuthor} coAuthors={coAuthors} />}

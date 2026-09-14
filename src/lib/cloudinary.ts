@@ -48,3 +48,16 @@ export function cloudinarySrcSet(
 
 export const COVER_IMAGE_WIDTHS = [400, 800, 1200, 1600];
 export const AVATAR_WIDTHS = [48, 96, 192];
+
+// Transformación fija para social preview (Open Graph / X Card) — 1200x630,
+// recorte relleno con foco automático, formato JPG explícito (preferido
+// sobre f_auto para consistencia con crawlers que no negocian formato).
+// No reutiliza DEFAULT_EXTRA a propósito: ArticleCover necesita w variable
+// + f_auto (mejor formato por navegador); el social preview necesita una
+// única variante fija y de formato predecible. No afecta a ArticleCover.
+const SOCIAL_IMAGE_TRANSFORM = "w_1200,h_630,c_fill,g_auto,q_auto,f_jpg";
+
+/** URL fija 1200x630 de la portada, para og:image/twitter:image. */
+export function cloudinarySocialImageUrl(url: string): string {
+  return withCloudinaryTransformation(url, SOCIAL_IMAGE_TRANSFORM);
+}
