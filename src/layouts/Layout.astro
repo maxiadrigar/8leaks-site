@@ -21,6 +21,7 @@ interface Props {
   ogType?: "article";
   ogImage?: OgImage;
   article?: ArticleSeoMeta;
+  jsonLd?: Record<string, unknown>;
 }
 
 const {
@@ -30,6 +31,7 @@ const {
   ogType,
   ogImage,
   article,
+  jsonLd,
 } = Astro.props;
 ---
 
@@ -46,6 +48,7 @@ const {
       ogType={ogType}
       ogImage={ogImage}
       article={article}
+      jsonLd={jsonLd}
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

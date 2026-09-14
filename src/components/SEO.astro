@@ -26,9 +26,14 @@ interface Props {
   ogType?: "article";
   ogImage?: OgImage;
   article?: ArticleSeoMeta;
+  jsonLd?: Record<string, unknown>;
 }
 
-const { title, description, canonical, ogType, ogImage, article } = Astro.props;
+const { title, description, canonical, ogType, ogImage, article, jsonLd } = Astro.props;
+// Escapa "<" para que un valor editorial que contuviera "</script>" no
+// pueda cerrar el tag prematuramente — JSON.parse decodifica < de
+// vuelta a "<" sin alterar el JSON.
+const jsonLdSafe = jsonLd ? JSON.stringify(jsonLd).replace(/</g, "\\u003c") : undefined;
 ---
 
 <title>{title}</title>
@@ -68,3 +73,4 @@ const { title, description, canonical, ogType, ogImage, article } = Astro.props;
     </>
   )
 }
+{jsonLdSafe && <script type="application/ld+json" is:inline set:html={jsonLdSafe} />}

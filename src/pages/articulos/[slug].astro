@@ -12,7 +12,13 @@ import ArticleTags from "../../components/ArticleTags.astro";
 import ArticleShare from "../../components/ArticleShare.astro";
 import ArticleRelated from "../../components/ArticleRelated.astro";
 import { getRelatedArticles } from "../../lib/articles";
-import { resolveCanonicalUrl, buildArticleOpenGraph } from "../../lib/seo";
+import {
+  resolveCanonicalUrl,
+  resolveSiteUrl,
+  buildArticleOpenGraph,
+  buildArticleJsonLd,
+  PUBLISHER_LOGO_PATH,
+} from "../../lib/seo";
 import { cloudinarySocialImageUrl } from "../../lib/cloudinary";
 
 export async function getStaticPaths() {
@@ -56,6 +62,20 @@ const articleOpenGraph = buildArticleOpenGraph({
   publishedAt: article.data.publishedAt,
   updatedAt: article.data.updatedAt,
 });
+
+const publisherLogoUrl = resolveSiteUrl(Astro.site, PUBLISHER_LOGO_PATH);
+const articleJsonLd = buildArticleJsonLd({
+  headline: article.data.title,
+  description: pageDescription,
+  publishedAt: article.data.publishedAt,
+  updatedAt: article.data.updatedAt,
+  authors: authors.map((entry) => ({ id: entry.id, name: entry.data.name })),
+  publisherLogoUrl,
+  canonicalUrl,
+  image: ogImage.url,
+  articleSection: articleOpenGraph.section,
+  tags: article.data.tags,
+});
 ---
 
 <Layout
@@ -65,6 +85,7 @@ const articleOpenGraph = buildArticleOpenGraph({
   ogType="article"
   ogImage={ogImage}
   article={articleOpenGraph}
+  jsonLd={articleJsonLd}
 >
   <Header />
   <main class="article-layout">
