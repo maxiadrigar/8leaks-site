@@ -2,12 +2,9 @@
 title: "La meta fiscal que se aleja y el relato que se sostiene: Argentina llega
   dividida a la revisión del FMI"
 dek: ""
-excerpt: A dos meses de la visita de Kristalina Georgieva, la revisión del FMI
-  que arranca la semana del 21 de septiembre encuentra a la Argentina con la
-  meta fiscal de diciembre cada vez más lejos, la reforma tributaria
-  comprometida pospuesta a 2027 y un calendario de vencimientos que se endurece
-  hasta 2029. Qué dice el Fondo, qué muestran los números y dónde está la
-  diferencia.
+excerpt: A dos meses de la visita de Kristalina Georgieva, Argentina llega a una
+  nueva revisión del FMI con la meta fiscal bajo presión, la reforma tributaria
+  postergada y un calendario de vencimientos cada vez más exigente.
 coverImage:
   url: https://res.cloudinary.com/dbkkfda3c/image/upload/v1789444272/grafico2_emision_deuda.png
   alt: Emición de deuda en mercados internacionales
