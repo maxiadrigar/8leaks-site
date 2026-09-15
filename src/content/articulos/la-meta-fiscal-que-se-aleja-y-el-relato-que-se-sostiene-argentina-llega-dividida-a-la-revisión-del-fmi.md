@@ -16,7 +16,7 @@ author:
 category: economia
 editorialType: analisis
 tags:
-  - economia
+  - FMI
 sources:
   - type: documento
     label: 'Dossier "FMI-Argentina: puntos clave de la visita del organismo"'
@@ -27,6 +27,12 @@ sponsor:
   sponsored: false
 seo:
   noindex: false
+  title: Argentina llega dividida a la revisión del FMI
+  description: A dos meses de la visita de Kristalina Georgieva, la revisión del
+    FMI que arranca la semana del 21 de septiembre encuentra a la Argentina con
+    la meta fiscal de diciembre cada vez más lejos, la reforma tributaria
+    comprometida pospuesta a 2027 y un calendario de vencimientos que se
+    endurece hasta 2029
 draft: true
 ---
 El 27 de julio, la directora gerente del Fondo Monetario Internacional, Kristalina Georgieva, visitó la Argentina. Se reunió con el gabinete nacional, recorrió los yacimientos de Vaca Muerta en Neuquén y, según trascendió de su misión, calificó los resultados del programa económico como "impresionantes". Casi dos meses después, la vocera del organismo, Julie Kozack, fue más allá: dijo que Argentina cumpliría las metas de emisión monetaria, reservas del Banco Central y superávit fiscal, y que la tercera revisión del acuerdo —que comienza esta semana— podría no necesitar, por primera vez, un "waiver" o perdón por incumplimiento.
