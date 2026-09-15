@@ -18,8 +18,18 @@ editorialType: analisis
 tags:
   - FMI
 sources:
-  - type: documento
-    label: 'Dossier "FMI-Argentina: puntos clave de la visita del organismo"'
+  - type: oficial
+    label: Aviso BIRF — préstamo garantizado USD 2.000 M
+    url: https://www.boletinoficial.gob.ar/detalleAviso/primera/344175/20260708
+    accessedAt: 2026-09-15T01:12:00.000-03:00
+  - label: Aviso BID — préstamo con garantía parcial USD 1.200 M
+    url: https://www.boletinoficial.gob.ar/detalleAviso/primera/344177/20260708
+    accessedAt: 2026-09-15T01:13:00.000-03:00
+    type: oficial
+  - label: "Argentina después de Georgieva: los hechos de una visita que excedió la
+      revisión del FMI"
+    url: https://www.nodal.am/2026/07/argentina-despues-de-georgieva-los-hechos-de-una-visita-que-excedio-la-revision-del-fmi-por-emilia-trabucco/
+    type: oficial
 publishedAt: 2026-09-15T00:49:00-03:00
 featured: true
 access: free
@@ -33,7 +43,7 @@ seo:
     la meta fiscal de diciembre cada vez más lejos, la reforma tributaria
     comprometida pospuesta a 2027 y un calendario de vencimientos que se
     endurece hasta 2029
-draft: true
+draft: false
 ---
 El 27 de julio, la directora gerente del Fondo Monetario Internacional, Kristalina Georgieva, visitó la Argentina. Se reunió con el gabinete nacional, recorrió los yacimientos de Vaca Muerta en Neuquén y, según trascendió de su misión, calificó los resultados del programa económico como "impresionantes". Casi dos meses después, la vocera del organismo, Julie Kozack, fue más allá: dijo que Argentina cumpliría las metas de emisión monetaria, reservas del Banco Central y superávit fiscal, y que la tercera revisión del acuerdo —que comienza esta semana— podría no necesitar, por primera vez, un "waiver" o perdón por incumplimiento.
 
