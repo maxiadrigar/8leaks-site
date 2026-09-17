@@ -3,9 +3,9 @@
 // posts se ven exactamente igual (featured es solo un criterio de orden,
 // ver index.astro), como en el listado "Latest posts" de blog.x.com.
 //
-// El título todavía NO es un enlace: no existe la página individual de
-// artículo. Cuando exista, envolver el <h3> en <a href={...}> y activar
-// el hover gris → negro dejado preparado (comentado) más abajo.
+// El título es el enlace principal hacia la página individual del
+// artículo (misma URL que genera src/pages/articulos/[slug].astro:
+// /articulos/<article.id>/, igual que ArticleRelated.astro).
 import type { CollectionEntry } from "astro:content";
 import { categoryLabel, formatArticleDate } from "../lib/content-format";
 
@@ -20,7 +20,7 @@ const { title, category, publishedAt } = article.data;
 
 <article class="post-row">
   <p class="post-row__eyebrow">{categoryLabel(category)}</p>
-  <h3 class="post-row__title">{title}</h3>
+  <h3 class="post-row__title"><a href={`/articulos/${article.id}/`}>{title}</a></h3>
   <p class="post-row__meta">
     {author && <span>{author.data.name}</span>}
     {author && " · "}
@@ -43,7 +43,6 @@ const { title, category, publishedAt } = article.data;
   }
 
   .post-row__title {
-    color: var(--color-graphite-600);
     font-size: var(--text-post-title);
     font-weight: 700;
     line-height: var(--leading-solid);
@@ -51,12 +50,15 @@ const { title, category, publishedAt } = article.data;
     max-width: 44ch;
   }
 
-  /* Preparado para cuando el título sea un enlace real:
-  .post-row__title:hover {
+  .post-row__title a {
+    color: var(--color-graphite-600);
+    text-decoration: none;
+  }
+
+  .post-row__title a:hover {
     color: var(--color-ink-950);
     transition: color 180ms ease;
   }
-  */
 
   .post-row__meta {
     margin-top: var(--space-4);
