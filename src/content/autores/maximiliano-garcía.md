@@ -1,9 +1,9 @@
 ---
 name: Maximiliano García
-headline: Prof.
+headline: Profesor de Educación Física
 handle: "@maxiadrigar"
 avatar:
-  url: https://res.cloudinary.com/dbkkfda3c/image/upload/v1789614002/perfil2.jpg
+  url: https://res.cloudinary.com/dbkkfda3c/image/upload/v1789617912/perfil3.jpg
   alt: Imagen de perfil
 socialLinks:
   - platform: instagram
