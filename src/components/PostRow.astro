@@ -7,7 +7,7 @@
 // artículo (misma URL que genera src/pages/articulos/[slug].astro:
 // /articulos/<article.id>/, igual que ArticleRelated.astro).
 import type { CollectionEntry } from "astro:content";
-import { categoryLabel, formatArticleDate } from "../lib/content-format";
+import { categoryLabel, formatArticleDateListing } from "../lib/content-format";
 
 interface Props {
   article: CollectionEntry<"articulos">;
@@ -22,9 +22,14 @@ const { title, category, publishedAt } = article.data;
   <p class="post-row__eyebrow">{categoryLabel(category)}</p>
   <h3 class="post-row__title"><a href={`/articulos/${article.id}/`}>{title}</a></h3>
   <p class="post-row__meta">
-    {author && <span>{author.data.name}</span>}
-    {author && " · "}
-    <time datetime={publishedAt.toISOString()}>{formatArticleDate(publishedAt)}</time>
+    {author && (
+      <>
+        <span class="post-row__by">Por</span>{" "}
+        <span class="post-row__author-name">{author.data.name}</span>
+        <span class="post-row__comma">, </span>
+      </>
+    )}
+    <time datetime={publishedAt.toISOString()}>{formatArticleDateListing(publishedAt)}</time>
   </p>
 </article>
 
@@ -65,5 +70,11 @@ const { title, category, publishedAt } = article.data;
     color: var(--color-graphite-600);
     font-size: var(--text-meta);
     line-height: var(--leading-meta);
+  }
+
+  .post-row__author-name {
+    color: var(--color-black);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 </style>

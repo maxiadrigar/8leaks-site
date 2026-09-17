@@ -76,6 +76,20 @@ export function formatArticleDateLong(date: Date): string {
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
+// Misma fecha larga que formatArticleDateLong (reutiliza longDateFormatter)
+// pero sin la coma entre día de semana y número — formato de metadata en
+// listados (Home/categorías vía PostRow), a pedido explícito. No reemplaza
+// formatArticleDateLong, que sigue gobernando Article V2.
+export function formatArticleDateListing(date: Date): string {
+  const parts = longDateFormatter.formatToParts(date);
+  const formatted = parts
+    .map((part, index) =>
+      part.type === "literal" && parts[index - 1]?.type === "weekday" ? " " : part.value,
+    )
+    .join("");
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
+
 const SOURCE_TYPE_LABELS: Record<string, string> = {
   oficial: "Fuente oficial",
   medio: "Medio de comunicación",
